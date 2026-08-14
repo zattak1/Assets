@@ -58,7 +58,12 @@
 		"ChooseCurrency": "Trieu una moneda",
 		"YouCanSendUpTo": "Podeu enviar fins a {{amount}} {{symbol}}",
 		"Send": "Enviar",
-		"EnterAmount": "introdu\u00efu la quantitat"
+		"EnterAmount": "introdu\u00efu la quantitat",
+		"confirm": {
+			"AutoCharge": "Voleu utilitzar el m\u00e8tode de pagament desat per pagar {{amount}} per {{reason}} ?",
+			"AutoChargeToSpecificPaymentMethod": "Voleu utilitzar el m\u00e8tode de pagament desat que acabeu en {{last4}} per pagar {{amount}} per {{reason}} ?",
+			"AutoChargeToSpecificWeb3": "Voleu utilitzar la vostra assignaci\u00f3 {{token}} en {{chainName}} de {{address}} per pagar {{amount}} per {{reason}} ?"
+		}
 	},
 	"credits": {
 		"InviteAcceptedBy": "Invitaci\u00f3 acceptada pel {{invitedUserName}}",
@@ -701,5 +706,27 @@
 	"discounts": {
 		"PercentDescription": "Has desbloquejat un descompte {{percent}} .",
 		"FormattedDescription": "Has desbloquejat un descompte per estalviar {{format}}"
+	},
+	"invoice": {
+		"AmountPlaceholder": "0.00",
+		"pending": "Pendent",
+		"paid": "Pagat",
+		"expired": "Caducat",
+		"canceled": "Cancel\u00b7lat",
+		"NewInvoice": "Nova factura",
+		"CreateInvoice": "Crear factura",
+		"DefaultTitle": "Factura",
+		"TitlePlaceholder": "Per a qu\u00e8 serveix aix\u00f2?",
+		"PayWithCryptoWallet": "Paga amb moneder criptogr\u00e0fic",
+		"SelectToken": "Selecciona un token per pagar",
+		"Authorize": "Autoritzar",
+		"PayNow": "Paga ara",
+		"SwitchChain": "Si us plau, canvia a {{chainName}}",
+		"SwitchNetwork": "Commutador de xarxa",
+		"ApprovingToken": "S&#39;est\u00e0 aprovant el testimoni...",
+		"NoAcceptedTokens": "No s&#39;han trobat tokens acceptats a la cartera.",
+		"PayWithBitcoin": "Paga amb Bitcoin",
+		"CopyLightningInvoice": "Copia la factura Lightning",
+		"Copied": "Copiat!"
 	}
 }

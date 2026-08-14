@@ -58,7 +58,12 @@
 		"ChooseCurrency": "Wybierz walut\u0119",
 		"YouCanSendUpTo": "Mo\u017cesz wys\u0142a\u0107 do {{amount}} {{symbol}}",
 		"Send": "Wys\u0142a\u0107",
-		"EnterAmount": "Wprowad\u017a ilo\u015b\u0107"
+		"EnterAmount": "Wprowad\u017a ilo\u015b\u0107",
+		"confirm": {
+			"AutoCharge": "Czy chcesz wykorzysta\u0107 zapisan\u0105 metod\u0119 p\u0142atno\u015bci, aby zap\u0142aci\u0107 {{amount}} za {{reason}} ?",
+			"AutoChargeToSpecificPaymentMethod": "Czy chcesz wykorzysta\u0107 zapisan\u0105 metod\u0119 p\u0142atno\u015bci ko\u0144cz\u0105c\u0105 si\u0119 na {{last4}} , aby zap\u0142aci\u0107 {{amount}} za {{reason}} ?",
+			"AutoChargeToSpecificWeb3": "Czy chcesz wykorzysta\u0107 kwot\u0119 {{token}} na {{chainName}} z {{address}} , aby zap\u0142aci\u0107 {{amount}} za {{reason}} ?"
+		}
 	},
 	"credits": {
 		"InviteAcceptedBy": "Zaproszenie zaakceptowane przez {{invitedUserName}}",
@@ -701,5 +706,27 @@
 	"discounts": {
 		"PercentDescription": "Odblokowa\u0142e\u015b zni\u017ck\u0119 {{percent}} .",
 		"FormattedDescription": "Odblokowa\u0142e\u015b zni\u017ck\u0119 i zaoszcz\u0119dzi\u0142e\u015b {{format}}"
+	},
+	"invoice": {
+		"AmountPlaceholder": "0.00",
+		"pending": "A\u017c do",
+		"paid": "P\u0142atny",
+		"expired": "Wygas\u0142y",
+		"canceled": "Odwo\u0142any",
+		"NewInvoice": "Nowa faktura",
+		"CreateInvoice": "Utw\u00f3rz faktur\u0119",
+		"DefaultTitle": "Faktura",
+		"TitlePlaceholder": "Do czego to s\u0142u\u017cy?",
+		"PayWithCryptoWallet": "Zap\u0142a\u0107 portfelem kryptowalutowym",
+		"SelectToken": "Wybierz token, kt\u00f3rym chcesz zap\u0142aci\u0107",
+		"Authorize": "Autoryzowa\u0107",
+		"PayNow": "Zap\u0142a\u0107 teraz",
+		"SwitchChain": "Prosz\u0119 prze\u0142\u0105czy\u0107 na {{chainName}}",
+		"SwitchNetwork": "Prze\u0142\u0105cz sie\u0107",
+		"ApprovingToken": "Zatwierdzanie tokena...",
+		"NoAcceptedTokens": "W Twoim portfelu nie znaleziono \u017cadnych akceptowanych token\u00f3w",
+		"PayWithBitcoin": "Zap\u0142a\u0107 Bitcoinem",
+		"CopyLightningInvoice": "Kopiuj faktur\u0119 Lightning",
+		"Copied": "Skopiowano!"
 	}
 }

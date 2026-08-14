@@ -58,7 +58,12 @@
 		"ChooseCurrency": "\u9009\u62e9\u8d27\u5e01",
 		"YouCanSendUpTo": "\u60a8\u6700\u591a\u53ef\u4ee5\u53d1\u9001{{amount}} {{symbol}}",
 		"Send": "\u53d1\u9001",
-		"EnterAmount": "\u8f93\u5165\u91d1\u989d"
+		"EnterAmount": "\u8f93\u5165\u91d1\u989d",
+		"confirm": {
+			"AutoCharge": "\u60a8\u60f3\u4f7f\u7528\u5df2\u4fdd\u5b58\u7684\u4ed8\u6b3e\u65b9\u5f0f\u652f\u4ed8{{amount}}\u8d2d\u4e70{{reason}}\u5417\uff1f",
+			"AutoChargeToSpecificPaymentMethod": "\u60a8\u60f3\u4f7f\u7528\u5df2\u4fdd\u5b58\u7684\u3001\u5c3e\u53f7\u4e3a{{last4}}\u7684\u4ed8\u6b3e\u65b9\u5f0f\u652f\u4ed8{{amount}}\u8d2d\u4e70{{reason}}\u5546\u54c1\u5417\uff1f",
+			"AutoChargeToSpecificWeb3": "\u60a8\u662f\u5426\u613f\u610f\u4f7f\u7528\u60a8\u5728{{address}}\u4e0b\u7684{{token}} {{chainName}}\u6765\u652f\u4ed8{{amount}} {{reason}} \uff1f"
+		}
 	},
 	"credits": {
 		"InviteAcceptedBy": "{{invitedUserName}}\u63a5\u53d7\u9080\u8bf7",
@@ -701,5 +706,27 @@
 	"discounts": {
 		"PercentDescription": "\u60a8\u5df2\u89e3\u9501{{percent}}\u6298\u6263\u3002",
 		"FormattedDescription": "\u60a8\u5df2\u89e3\u9501\u6298\u6263\uff0c\u53ef\u8282\u7701{{format}}"
+	},
+	"invoice": {
+		"AmountPlaceholder": "0.00",
+		"pending": "\u5f85\u529e\u7684",
+		"paid": "\u6709\u85aa\u916c\u7684",
+		"expired": "\u5df2\u5230\u671f",
+		"canceled": "\u53d6\u6d88",
+		"NewInvoice": "\u65b0\u53d1\u7968",
+		"CreateInvoice": "\u521b\u5efa\u53d1\u7968",
+		"DefaultTitle": "\u53d1\u7968",
+		"TitlePlaceholder": "\u8fd9\u662f\u505a\u4ec0\u4e48\u7528\u7684\uff1f",
+		"PayWithCryptoWallet": "\u4f7f\u7528\u52a0\u5bc6\u8d27\u5e01\u94b1\u5305\u652f\u4ed8",
+		"SelectToken": "\u9009\u62e9\u8981\u4f7f\u7528\u7684\u4ee3\u5e01\u8fdb\u884c\u652f\u4ed8",
+		"Authorize": "\u6388\u6743",
+		"PayNow": "\u7acb\u5373\u652f\u4ed8",
+		"SwitchChain": "\u8bf7\u62e8\u6253{{chainName}}",
+		"SwitchNetwork": "\u4ea4\u6362\u7f51\u7edc",
+		"ApprovingToken": "\u6279\u51c6\u4ee4\u724c...",
+		"NoAcceptedTokens": "\u60a8\u7684\u94b1\u5305\u4e2d\u672a\u627e\u5230\u4efb\u4f55\u53ef\u63a5\u53d7\u7684\u4ee3\u5e01\u3002",
+		"PayWithBitcoin": "\u4f7f\u7528\u6bd4\u7279\u5e01\u652f\u4ed8",
+		"CopyLightningInvoice": "\u590d\u5236 Lightning \u53d1\u7968",
+		"Copied": "\u5df2\u590d\u5236\uff01"
 	}
 }

@@ -58,7 +58,12 @@
 		"ChooseCurrency": "Vyberte m\u011bnu",
 		"YouCanSendUpTo": "M\u016f\u017eete poslat a\u017e {{amount}} {{symbol}}",
 		"Send": "Poslat",
-		"EnterAmount": "vlo\u017eit sumu"
+		"EnterAmount": "vlo\u017eit sumu",
+		"confirm": {
+			"AutoCharge": "Chcete k \u00fahrad\u011b {{amount}} za {{reason}} pou\u017e\u00edt svou ulo\u017eenou platebn\u00ed metodu?",
+			"AutoChargeToSpecificPaymentMethod": "Chcete k \u00fahrad\u011b {{amount}} za {{reason}} pou\u017e\u00edt ulo\u017eenou platebn\u00ed metodu kon\u010d\u00edc\u00ed na {{last4}} ?",
+			"AutoChargeToSpecificWeb3": "Cht\u011bli byste pou\u017e\u00edt sv\u016fj limit {{token}} na {{chainName}} z {{address}} k \u00fahrad\u011b {{amount}} za {{reason}} ?"
+		}
 	},
 	"credits": {
 		"InviteAcceptedBy": "Pozv\u00e1nka p\u0159ijata {{invitedUserName}}",
@@ -701,5 +706,27 @@
 	"discounts": {
 		"PercentDescription": "Odemkli jste slevu {{percent}} .",
 		"FormattedDescription": "Odemkli jste slevu a u\u0161et\u0159\u00edte {{format}}"
+	},
+	"invoice": {
+		"AmountPlaceholder": "0.00",
+		"pending": "\u010cek\u00e1 na vy\u0159\u00edzen\u00ed",
+		"paid": "Placen\u00e9",
+		"expired": "Platnost vypr\u0161ela",
+		"canceled": "Zru\u0161eno",
+		"NewInvoice": "Nov\u00e1 faktura",
+		"CreateInvoice": "Vytvo\u0159it fakturu",
+		"DefaultTitle": "Faktura",
+		"TitlePlaceholder": "K \u010demu tohle je?",
+		"PayWithCryptoWallet": "Pla\u0165te krypto pen\u011b\u017eenkou",
+		"SelectToken": "Vyberte token k platb\u011b",
+		"Authorize": "Povolit",
+		"PayNow": "Zaplatit nyn\u00ed",
+		"SwitchChain": "Pros\u00edm, p\u0159epn\u011bte na {{chainName}}",
+		"SwitchNetwork": "P\u0159epnout s\u00ed\u0165",
+		"ApprovingToken": "Schvalov\u00e1n\u00ed tokenu...",
+		"NoAcceptedTokens": "Ve va\u0161\u00ed pen\u011b\u017eence nebyly nalezeny \u017e\u00e1dn\u00e9 akceptovan\u00e9 tokeny.",
+		"PayWithBitcoin": "Pla\u0165te Bitcoinem",
+		"CopyLightningInvoice": "Kopie faktury Lightning",
+		"Copied": "Zkop\u00edrov\u00e1no!"
 	}
 }

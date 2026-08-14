@@ -58,7 +58,12 @@
 		"ChooseCurrency": "Pilih mata wang",
 		"YouCanSendUpTo": "Anda boleh menghantar sehingga {{amount}} {{symbol}}",
 		"Send": "Hantar",
-		"EnterAmount": "masukkan jumlah"
+		"EnterAmount": "masukkan jumlah",
+		"confirm": {
+			"AutoCharge": "Adakah anda ingin menggunakan kaedah pembayaran yang disimpan dalam rekod untuk membayar {{amount}} untuk {{reason}} ?",
+			"AutoChargeToSpecificPaymentMethod": "Adakah anda ingin menggunakan kaedah pembayaran yang disimpan pada fail yang berakhir dengan {{last4}} untuk membayar {{amount}} untuk {{reason}} ?",
+			"AutoChargeToSpecificWeb3": "Adakah anda ingin menggunakan elaun {{token}} anda untuk {{chainName}} dari {{address}} untuk membayar {{amount}} untuk {{reason}} ?"
+		}
 	},
 	"credits": {
 		"InviteAcceptedBy": "Jemputan diterima oleh {{invitedUserName}}",
@@ -701,5 +706,27 @@
 	"discounts": {
 		"PercentDescription": "Anda telah mendapat diskaun {{percent}} .",
 		"FormattedDescription": "Anda telah mendapat diskaun untuk menjimatkan {{format}}"
+	},
+	"invoice": {
+		"AmountPlaceholder": "0.00",
+		"pending": "Belum selesai",
+		"paid": "Dibayar",
+		"expired": "Tamat tempoh",
+		"canceled": "Dibatalkan",
+		"NewInvoice": "Invois Baharu",
+		"CreateInvoice": "Cipta Invois",
+		"DefaultTitle": "Invois",
+		"TitlePlaceholder": "Untuk apa ini?",
+		"PayWithCryptoWallet": "Bayar dengan dompet kripto",
+		"SelectToken": "Pilih token untuk membayar",
+		"Authorize": "Benarkan",
+		"PayNow": "Bayar sekarang",
+		"SwitchChain": "Sila tukar ke {{chainName}}",
+		"SwitchNetwork": "Rangkaian Tukar",
+		"ApprovingToken": "Token yang meluluskan...",
+		"NoAcceptedTokens": "Tiada token yang diterima ditemui dalam dompet anda",
+		"PayWithBitcoin": "Bayar dengan Bitcoin",
+		"CopyLightningInvoice": "Salin Invois Lightning",
+		"Copied": "Disalin!"
 	}
 }

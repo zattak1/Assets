@@ -58,7 +58,12 @@
 		"ChooseCurrency": "Pilih mata uang",
 		"YouCanSendUpTo": "Anda dapat mengirim hingga {{amount}} {{symbol}}",
 		"Send": "Mengirim",
-		"EnterAmount": "masukan jumlah"
+		"EnterAmount": "masukan jumlah",
+		"confirm": {
+			"AutoCharge": "Apakah Anda ingin menggunakan metode pembayaran yang tersimpan untuk membayar {{amount}} untuk {{reason}} ?",
+			"AutoChargeToSpecificPaymentMethod": "Apakah Anda ingin menggunakan metode pembayaran yang tersimpan dan berakhiran {{last4}} untuk membayar {{amount}} untuk {{reason}} ?",
+			"AutoChargeToSpecificWeb3": "Apakah Anda ingin menggunakan jatah {{token}} Anda pada {{chainName}} dari {{address}} untuk membayar {{amount}} untuk {{reason}} ?"
+		}
 	},
 	"credits": {
 		"InviteAcceptedBy": "Undangan diterima oleh {{invitedUserName}}",
@@ -701,5 +706,27 @@
 	"discounts": {
 		"PercentDescription": "Anda telah mendapatkan diskon {{percent}} .",
 		"FormattedDescription": "Anda telah membuka diskon untuk menghemat {{format}}"
+	},
+	"invoice": {
+		"AmountPlaceholder": "0.00",
+		"pending": "Tertunda",
+		"paid": "Dibayar",
+		"expired": "Kedaluwarsa",
+		"canceled": "Dibatalkan",
+		"NewInvoice": "Faktur Baru",
+		"CreateInvoice": "Buat Faktur",
+		"DefaultTitle": "Faktur",
+		"TitlePlaceholder": "Ini untuk apa?",
+		"PayWithCryptoWallet": "Bayar dengan dompet kripto",
+		"SelectToken": "Pilih token untuk melakukan pembayaran",
+		"Authorize": "Mengizinkan",
+		"PayNow": "Bayar sekarang",
+		"SwitchChain": "Silakan beralih ke {{chainName}}",
+		"SwitchNetwork": "Jaringan Switch",
+		"ApprovingToken": "Menyetujui token...",
+		"NoAcceptedTokens": "Tidak ada token yang diterima yang ditemukan di dompet Anda.",
+		"PayWithBitcoin": "Bayar dengan Bitcoin",
+		"CopyLightningInvoice": "Salin Faktur Lightning",
+		"Copied": "Disalin!"
 	}
 }

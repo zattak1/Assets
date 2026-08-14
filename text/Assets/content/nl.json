@@ -58,7 +58,12 @@
 		"ChooseCurrency": "Kies een valuta",
 		"YouCanSendUpTo": "U kunt maximaal {{amount}} {{symbol}} verzenden",
 		"Send": "Versturen",
-		"EnterAmount": "voer een bedrag in"
+		"EnterAmount": "voer een bedrag in",
+		"confirm": {
+			"AutoCharge": "Wilt u uw opgeslagen betaalmethode gebruiken om {{amount}} voor {{reason}} te betalen?",
+			"AutoChargeToSpecificPaymentMethod": "Wilt u uw opgeslagen betaalmethode met de eindcode {{last4}} gebruiken om {{amount}} te betalen voor {{reason}} ?",
+			"AutoChargeToSpecificWeb3": "Wilt u uw {{token}} {{address}} van {{chainName}} gebruiken om {{amount}} voor {{reason}} te betalen?"
+		}
 	},
 	"credits": {
 		"InviteAcceptedBy": "Uitnodiging geaccepteerd door {{invitedUserName}}",
@@ -701,5 +706,27 @@
 	"discounts": {
 		"PercentDescription": "Je hebt een korting {{percent}} ontgrendeld.",
 		"FormattedDescription": "Je hebt een korting ontgrendeld waarmee je {{format}} kunt besparen."
+	},
+	"invoice": {
+		"AmountPlaceholder": "0.00",
+		"pending": "In behandeling",
+		"paid": "Betaald",
+		"expired": "Verlopen",
+		"canceled": "Geannuleerd",
+		"NewInvoice": "Nieuwe factuur",
+		"CreateInvoice": "Factuur aanmaken",
+		"DefaultTitle": "Factuur",
+		"TitlePlaceholder": "Waar is dit voor?",
+		"PayWithCryptoWallet": "Betaal met een cryptowallet",
+		"SelectToken": "Selecteer een token om mee te betalen.",
+		"Authorize": "Autoriseren",
+		"PayNow": "Betaal nu",
+		"SwitchChain": "Schakel over naar {{chainName}}",
+		"SwitchNetwork": "Netwerk schakelen",
+		"ApprovingToken": "Token goedkeuren...",
+		"NoAcceptedTokens": "Er zijn geen geaccepteerde tokens gevonden in uw portemonnee.",
+		"PayWithBitcoin": "Betaal met Bitcoin",
+		"CopyLightningInvoice": "Kopieer de factuur van Lightning",
+		"Copied": "Gekopieerd!"
 	}
 }

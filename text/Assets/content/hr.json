@@ -58,7 +58,12 @@
 		"ChooseCurrency": "Odaberite valutu",
 		"YouCanSendUpTo": "Mo\u017eete poslati do {{amount}} {{symbol}}",
 		"Send": "Poslati",
-		"EnterAmount": "unesite iznos"
+		"EnterAmount": "unesite iznos",
+		"confirm": {
+			"AutoCharge": "\u017delite li koristiti spremljeni na\u010din pla\u0107anja za pla\u0107anje {{amount}} za {{reason}} ?",
+			"AutoChargeToSpecificPaymentMethod": "\u017delite li koristiti spremljenu metodu pla\u0107anja koja zavr\u0161ava na {{last4}} za pla\u0107anje {{amount}} za {{reason}} ?",
+			"AutoChargeToSpecificWeb3": "\u017delite li iskoristiti svoj limit {{token}} na {{chainName}} od {{address}} za pla\u0107anje {{amount}} za {{reason}} ?"
+		}
 	},
 	"credits": {
 		"InviteAcceptedBy": "{{invitedUserName}} prihvatio poziv",
@@ -701,5 +706,27 @@
 	"discounts": {
 		"PercentDescription": "Otklju\u010dali ste popust {{percent}} .",
 		"FormattedDescription": "Otklju\u010dali ste popust i u\u0161tedite {{format}}"
+	},
+	"invoice": {
+		"AmountPlaceholder": "0.00",
+		"pending": "Na \u010dekanju",
+		"paid": "Pla\u0107eno",
+		"expired": "Istekao",
+		"canceled": "Otkazano",
+		"NewInvoice": "Nova faktura",
+		"CreateInvoice": "Izradi fakturu",
+		"DefaultTitle": "Dostavnica",
+		"TitlePlaceholder": "\u010cemu ovo slu\u017ei?",
+		"PayWithCryptoWallet": "Pla\u0107anje kripto nov\u010danikom",
+		"SelectToken": "Odaberite token za pla\u0107anje",
+		"Authorize": "Ovlastiti",
+		"PayNow": "Plati sada",
+		"SwitchChain": "Molimo prebacite se na {{chainName}}",
+		"SwitchNetwork": "Prebaci mre\u017eu",
+		"ApprovingToken": "Odobravanje tokena...",
+		"NoAcceptedTokens": "U va\u0161em nov\u010daniku nisu prona\u0111eni prihva\u0107eni tokeni",
+		"PayWithBitcoin": "Pla\u0107anje Bitcoinom",
+		"CopyLightningInvoice": "Kopiraj Lightning fakturu",
+		"Copied": "Kopirano!"
 	}
 }

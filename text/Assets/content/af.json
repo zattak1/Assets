@@ -58,7 +58,12 @@
 		"ChooseCurrency": "Kies &#39;n geldeenheid",
 		"YouCanSendUpTo": "Jy kan tot {{amount}} {{symbol}} stuur",
 		"Send": "Stuur",
-		"EnterAmount": "voer bedrag in"
+		"EnterAmount": "voer bedrag in",
+		"confirm": {
+			"AutoCharge": "Wil jy jou gestoorde betaalmetode op l\u00eaer gebruik om {{amount}} vir {{reason}} te betaal?",
+			"AutoChargeToSpecificPaymentMethod": "Wil jy jou gestoorde betaalmetode wat op l\u00eaer eindig op {{last4}} gebruik om {{amount}} vir {{reason}} te betaal?",
+			"AutoChargeToSpecificWeb3": "Wil jy jou {{token}} toelaag op {{chainName}} van {{address}} gebruik om {{amount}} vir {{reason}} te betaal?"
+		}
 	},
 	"credits": {
 		"InviteAcceptedBy": "Uitnodiging aanvaar deur {{invitedUserName}}",
@@ -701,5 +706,27 @@
 	"discounts": {
 		"PercentDescription": "Jy het &#39;n {{percent}} afslag ontsluit.",
 		"FormattedDescription": "Jy het &#39;n afslag ontsluit om {{format}} te bespaar"
+	},
+	"invoice": {
+		"AmountPlaceholder": "0.00",
+		"pending": "Hangende",
+		"paid": "Betaal",
+		"expired": "Verstryk",
+		"canceled": "Gekanselleer",
+		"NewInvoice": "Nuwe Faktuur",
+		"CreateInvoice": "Skep Faktuur",
+		"DefaultTitle": "Faktuur",
+		"TitlePlaceholder": "Waarvoor is dit?",
+		"PayWithCryptoWallet": "Betaal met kripto-beursie",
+		"SelectToken": "Kies &#39;n teken om mee te betaal",
+		"Authorize": "Magtig",
+		"PayNow": "Betaal nou",
+		"SwitchChain": "Skakel asseblief oor na {{chainName}}",
+		"SwitchNetwork": "Skakelnetwerk",
+		"ApprovingToken": "Goedkeuring van teken...",
+		"NoAcceptedTokens": "Geen aanvaarde tokens in jou beursie gevind nie",
+		"PayWithBitcoin": "Betaal met Bitcoin",
+		"CopyLightningInvoice": "Kopieer Lightning-faktuur",
+		"Copied": "Gekopieer!"
 	}
 }

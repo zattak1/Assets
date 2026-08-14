@@ -58,7 +58,12 @@
 		"ChooseCurrency": "Chagua sarafu",
 		"YouCanSendUpTo": "Unaweza kutuma hadi {{amount}} {{symbol}}",
 		"Send": "Tuma",
-		"EnterAmount": "ingiza kiasi"
+		"EnterAmount": "ingiza kiasi",
+		"confirm": {
+			"AutoCharge": "Ungependa kutumia njia yako ya malipo iliyohifadhiwa kwenye faili ili kulipa {{amount}} kwa {{reason}} ?",
+			"AutoChargeToSpecificPaymentMethod": "Ungependa kutumia njia yako ya malipo iliyohifadhiwa kwenye faili inayoishia na {{last4}} ili kulipa {{amount}} kwa {{reason}} ?",
+			"AutoChargeToSpecificWeb3": "Ungependa kutumia posho yako {{token}} kwa {{chainName}} kutoka {{address}} kulipa {{amount}} kwa {{reason}} ?"
+		}
 	},
 	"credits": {
 		"InviteAcceptedBy": "Mwaliko umekubaliwa na {{invitedUserName}}",
@@ -701,5 +706,27 @@
 	"discounts": {
 		"PercentDescription": "Umefungua punguzo la {{percent}} .",
 		"FormattedDescription": "Umefungua punguzo la bei ili kuokoa {{format}}"
+	},
+	"invoice": {
+		"AmountPlaceholder": "0.00",
+		"pending": "Inasubiri",
+		"paid": "Imelipwa",
+		"expired": "Muda wake umeisha",
+		"canceled": "Imeghairiwa",
+		"NewInvoice": "Ankara Mpya",
+		"CreateInvoice": "Unda Ankara",
+		"DefaultTitle": "Ankara",
+		"TitlePlaceholder": "Hii ni kwa ajili ya nini?",
+		"PayWithCryptoWallet": "Lipa kwa kutumia pochi ya crypto",
+		"SelectToken": "Chagua tokeni ya kulipa nayo",
+		"Authorize": "Idhinisha",
+		"PayNow": "Lipa sasa",
+		"SwitchChain": "Tafadhali badilisha hadi {{chainName}}",
+		"SwitchNetwork": "Badilisha Mtandao",
+		"ApprovingToken": "Tokeni inaidhinishwa...",
+		"NoAcceptedTokens": "Hakuna tokeni zilizokubaliwa zilizopatikana kwenye pochi yako",
+		"PayWithBitcoin": "Lipa kwa Bitcoin",
+		"CopyLightningInvoice": "Nakili Ankara ya Umeme",
+		"Copied": "Imenakiliwa!"
 	}
 }

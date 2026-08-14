@@ -58,7 +58,12 @@
 		"ChooseCurrency": "Pasirinkite valiut\u0105",
 		"YouCanSendUpTo": "Galite si\u0173sti iki {{amount}} {{symbol}}",
 		"Send": "Si\u0173sti",
-		"EnterAmount": "\u012fveskite sum\u0105"
+		"EnterAmount": "\u012fveskite sum\u0105",
+		"confirm": {
+			"AutoCharge": "Ar nor\u0117tum\u0117te naudoti i\u0161saugot\u0105 mok\u0117jimo b\u016bd\u0105, kad sumok\u0117tum\u0117te {{amount}} u\u017e {{reason}} ?",
+			"AutoChargeToSpecificPaymentMethod": "Ar nor\u0117tum\u0117te naudoti i\u0161saugot\u0105 mok\u0117jimo b\u016bd\u0105, kuris baigiasi {{last4}} , kad sumok\u0117tum\u0117te {{amount}} u\u017e {{reason}} ?",
+			"AutoChargeToSpecificWeb3": "Ar nor\u0117tum\u0117te panaudoti savo {{token}} i\u0161mok\u0105 {{chainName}} i\u0161 {{address}} , kad sumok\u0117tum\u0117te {{amount}} u\u017e {{reason}} ?"
+		}
 	},
 	"credits": {
 		"InviteAcceptedBy": "Kvietim\u0105 pri\u0117m\u0117 {{invitedUserName}}",
@@ -701,5 +706,27 @@
 	"discounts": {
 		"PercentDescription": "Atrakinote {{percent}} nuolaid\u0105.",
 		"FormattedDescription": "Atrakinote nuolaid\u0105, leid\u017eian\u010di\u0105 sutaupyti {{format}}"
+	},
+	"invoice": {
+		"AmountPlaceholder": "0.00",
+		"pending": "Laukiama",
+		"paid": "Mokama",
+		"expired": "Nebegalioja",
+		"canceled": "At\u0161aukta",
+		"NewInvoice": "Nauja s\u0105skaita fakt\u016bra",
+		"CreateInvoice": "Sukurti s\u0105skait\u0105 fakt\u016br\u0105",
+		"DefaultTitle": "S\u0105skaita fakt\u016bra",
+		"TitlePlaceholder": "Kam tai skirta?",
+		"PayWithCryptoWallet": "Mok\u0117kite kriptovaliut\u0173 pinigine",
+		"SelectToken": "Pasirinkite \u017eeton\u0105, kuriuo norite mok\u0117ti",
+		"Authorize": "\u012egalioti",
+		"PayNow": "Mok\u0117ti dabar",
+		"SwitchChain": "Pra\u0161ome pereiti prie {{chainName}}",
+		"SwitchNetwork": "Perjungti tinkl\u0105",
+		"ApprovingToken": "Patvirtinamas prieigos raktas...",
+		"NoAcceptedTokens": "J\u016bs\u0173 pinigin\u0117je nerasta priimt\u0173 \u017eeton\u0173",
+		"PayWithBitcoin": "Mok\u0117kite Bitcoin",
+		"CopyLightningInvoice": "Kopijuoti \u201eLightning\u201c s\u0105skait\u0105 fakt\u016br\u0105",
+		"Copied": "Nukopijuota!"
 	}
 }

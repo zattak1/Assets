@@ -58,7 +58,12 @@
 		"ChooseCurrency": "Ag\u0127\u017cel munita",
 		"YouCanSendUpTo": "Tista&#39; tibg\u0127at sa {{amount}} {{symbol}}",
 		"Send": "Ibg\u0127at",
-		"EnterAmount": "da\u0127\u0127al l-ammont"
+		"EnterAmount": "da\u0127\u0127al l-ammont",
+		"confirm": {
+			"AutoCharge": "Tixtieq tu\u017ca l-metodu ta&#39; \u0127las salvat tieg\u0127ek biex t\u0127allas {{amount}} g\u0127al {{reason}} ?",
+			"AutoChargeToSpecificPaymentMethod": "Tixtieq tu\u017ca l-metodu ta&#39; \u0127las salvat tieg\u0127ek fir-rekord li jispi\u010b\u010ba {{last4}} biex t\u0127allas {{amount}} g\u0127al {{reason}} ?",
+			"AutoChargeToSpecificWeb3": "Tixtieq tu\u017ca l-allowance ta&#39; {{token}} tieg\u0127ek fuq {{chainName}} minn {{address}} biex t\u0127allas {{amount}} g\u0127al {{reason}} ?"
+		}
 	},
 	"credits": {
 		"InviteAcceptedBy": "Stedina a\u010b\u010bettata minn {{invitedUserName}}",
@@ -701,5 +706,27 @@
 	"discounts": {
 		"PercentDescription": "Ifta\u0127t skont ta&#39; {{percent}} .",
 		"FormattedDescription": "Ifta\u0127t skont biex tiffranka {{format}}"
+	},
+	"invoice": {
+		"AmountPlaceholder": "0.00",
+		"pending": "Pendenti",
+		"paid": "Im\u0127allas",
+		"expired": "Skada",
+		"canceled": "Ikkan\u010bellat",
+		"NewInvoice": "Fattura \u0120dida",
+		"CreateInvoice": "O\u0127loq Fattura",
+		"DefaultTitle": "Fattura",
+		"TitlePlaceholder": "G\u0127al xiex inhu dan?",
+		"PayWithCryptoWallet": "\u0126allas bil-kartiera kripto",
+		"SelectToken": "Ag\u0127\u017cel token biex t\u0127allas bih",
+		"Authorize": "Awtorizza",
+		"PayNow": "\u0126allas issa",
+		"SwitchChain": "Jekk jog\u0127\u0121bok aqleb g\u0127al {{chainName}}",
+		"SwitchNetwork": "Netwerk tal-Iswi\u010b\u010b",
+		"ApprovingToken": "Approvazzjoni tat-token...",
+		"NoAcceptedTokens": "Ma nstabu l-ebda tokens a\u010b\u010bettati fil-kartiera tieg\u0127ek",
+		"PayWithBitcoin": "\u0126allas bil-Bitcoin",
+		"CopyLightningInvoice": "Kopja tal-Fattura tas-Sajjetti",
+		"Copied": "Ikkupjat!"
 	}
 }

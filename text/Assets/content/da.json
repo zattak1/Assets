@@ -58,7 +58,12 @@
 		"ChooseCurrency": "V\u00e6lg en valuta",
 		"YouCanSendUpTo": "Du kan sende op til {{amount}} {{symbol}}",
 		"Send": "Sende",
-		"EnterAmount": "indtast bel\u00f8b"
+		"EnterAmount": "indtast bel\u00f8b",
+		"confirm": {
+			"AutoCharge": "Vil du bruge din gemte betalingsmetode til at betale {{amount}} for {{reason}} ?",
+			"AutoChargeToSpecificPaymentMethod": "Vil du bruge din gemte betalingsmetode, der ender p\u00e5 {{last4}} , til at betale {{amount}} for {{reason}} ?",
+			"AutoChargeToSpecificWeb3": "Vil du bruge din {{token}} kvote p\u00e5 {{chainName}} fra {{address}} til at betale {{amount}} for {{reason}} ?"
+		}
 	},
 	"credits": {
 		"InviteAcceptedBy": "Invitation accepteret af {{invitedUserName}}",
@@ -701,5 +706,27 @@
 	"discounts": {
 		"PercentDescription": "Du har f\u00e5et rabat p\u00e5 {{percent}} .",
 		"FormattedDescription": "Du har l\u00e5st op for en rabat, s\u00e5 du kan spare {{format}}"
+	},
+	"invoice": {
+		"AmountPlaceholder": "0.00",
+		"pending": "Indtil",
+		"paid": "Betalt",
+		"expired": "Udl\u00f8bet",
+		"canceled": "Annulleret",
+		"NewInvoice": "Ny faktura",
+		"CreateInvoice": "Opret faktura",
+		"DefaultTitle": "Faktura",
+		"TitlePlaceholder": "Hvad er dette til?",
+		"PayWithCryptoWallet": "Betal med krypto-wallet",
+		"SelectToken": "V\u00e6lg en token at betale med",
+		"Authorize": "Bemyndige",
+		"PayNow": "Betal nu",
+		"SwitchChain": "Skift venligst til {{chainName}}",
+		"SwitchNetwork": "Skift netv\u00e6rk",
+		"ApprovingToken": "Godkender token...",
+		"NoAcceptedTokens": "Der blev ikke fundet nogen accepterede tokens i din tegnebog",
+		"PayWithBitcoin": "Betal med Bitcoin",
+		"CopyLightningInvoice": "Kopi\u00e9r Lightning-faktura",
+		"Copied": "Kopieret!"
 	}
 }

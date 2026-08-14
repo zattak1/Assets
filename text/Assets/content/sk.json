@@ -58,7 +58,12 @@
 		"ChooseCurrency": "Vyberte menu",
 		"YouCanSendUpTo": "M\u00f4\u017eete posla\u0165 a\u017e {{amount}} {{symbol}}",
 		"Send": "Odosla\u0165",
-		"EnterAmount": "zadajte sumu"
+		"EnterAmount": "zadajte sumu",
+		"confirm": {
+			"AutoCharge": "Chcete pou\u017ei\u0165 svoju ulo\u017een\u00fa platobn\u00fa met\u00f3du na zaplatenie {{amount}} za {{reason}} ?",
+			"AutoChargeToSpecificPaymentMethod": "Chcete pou\u017ei\u0165 svoju ulo\u017een\u00fa platobn\u00fa met\u00f3du kon\u010diacu na {{last4}} na zaplatenie {{amount}} za {{reason}} ?",
+			"AutoChargeToSpecificWeb3": "Chceli by ste pou\u017ei\u0165 svoj limit {{token}} na {{chainName}} z {{address}} na zaplatenie {{amount}} za {{reason}} ?"
+		}
 	},
 	"credits": {
 		"InviteAcceptedBy": "Pozvanie prijat\u00e9 {{invitedUserName}}",
@@ -701,5 +706,27 @@
 	"discounts": {
 		"PercentDescription": "Odomkli ste z\u013eavu {{percent}} .",
 		"FormattedDescription": "Z\u00edskali ste z\u013eavu a u\u0161etr\u00edte {{format}}"
+	},
+	"invoice": {
+		"AmountPlaceholder": "0.00",
+		"pending": "\u010cak\u00e1 sa na spracovanie",
+		"paid": "Platen\u00e9",
+		"expired": "Platnos\u0165 vypr\u0161ala",
+		"canceled": "Zru\u0161en\u00e9",
+		"NewInvoice": "Nov\u00e1 fakt\u00fara",
+		"CreateInvoice": "Vytvori\u0165 fakt\u00faru",
+		"DefaultTitle": "Fakt\u00fara",
+		"TitlePlaceholder": "Na \u010do to sl\u00fa\u017ei?",
+		"PayWithCryptoWallet": "Pla\u0165te krypto pe\u0148a\u017eenkou",
+		"SelectToken": "Vyberte token na platbu",
+		"Authorize": "Autorizova\u0165",
+		"PayNow": "Zaplati\u0165 teraz",
+		"SwitchChain": "Pros\u00edm, prepnite na {{chainName}}",
+		"SwitchNetwork": "Prepn\u00fa\u0165 sie\u0165",
+		"ApprovingToken": "Schva\u013eovanie tokenu...",
+		"NoAcceptedTokens": "Vo va\u0161ej pe\u0148a\u017eenke sa nena\u0161li \u017eiadne akceptovan\u00e9 tokeny",
+		"PayWithBitcoin": "Platba bitcoinmi",
+		"CopyLightningInvoice": "K\u00f3pia fakt\u00fary Lightning",
+		"Copied": "Skop\u00edrovan\u00e9!"
 	}
 }

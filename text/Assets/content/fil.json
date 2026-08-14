@@ -58,7 +58,12 @@
 		"ChooseCurrency": "Pumili ng pera",
 		"YouCanSendUpTo": "Maaari kang magpadala ng hanggang {{amount}} {{symbol}}",
 		"Send": "Ipadala",
-		"EnterAmount": "ipasok ang halaga"
+		"EnterAmount": "ipasok ang halaga",
+		"confirm": {
+			"AutoCharge": "Gusto mo bang gamitin ang iyong naka-save na paraan ng pagbabayad na nakatala para magbayad {{amount}} para sa {{reason}} ?",
+			"AutoChargeToSpecificPaymentMethod": "Gusto mo bang gamitin ang iyong naka-save na paraan ng pagbabayad sa file na nagtatapos sa {{last4}} para magbayad {{amount}} para sa {{reason}} ?",
+			"AutoChargeToSpecificWeb3": "Gusto mo bang gamitin ang iyong {{token}} allowance sa {{chainName}} mula sa {{address}} para bayaran {{amount}} para sa {{reason}} ?"
+		}
 	},
 	"credits": {
 		"InviteAcceptedBy": "Tinanggap ang imbitasyon ng {{invitedUserName}}",
@@ -701,5 +706,27 @@
 	"discounts": {
 		"PercentDescription": "Na-unlock mo na ang {{percent}} na diskwento.",
 		"FormattedDescription": "Na-unlock mo na ang diskwento para makatipid {{format}}"
+	},
+	"invoice": {
+		"AmountPlaceholder": "0.00",
+		"pending": "Nakabinbin",
+		"paid": "Bayad",
+		"expired": "Nag-expire na",
+		"canceled": "Kinansela",
+		"NewInvoice": "Bagong Invoice",
+		"CreateInvoice": "Gumawa ng Invoice",
+		"DefaultTitle": "Invoice",
+		"TitlePlaceholder": "Para saan ito?",
+		"PayWithCryptoWallet": "Magbayad gamit ang crypto wallet",
+		"SelectToken": "Pumili ng token na gagamitin sa pagbabayad",
+		"Authorize": "Pahintulutan",
+		"PayNow": "Magbayad ngayon",
+		"SwitchChain": "Lumipat sa {{chainName}}",
+		"SwitchNetwork": "Lumipat ng Network",
+		"ApprovingToken": "Token na inaaprubahan...",
+		"NoAcceptedTokens": "Walang nahanap na tinatanggap na mga token sa iyong wallet",
+		"PayWithBitcoin": "Magbayad gamit ang Bitcoin",
+		"CopyLightningInvoice": "Kopyahin ang Lightning Invoice",
+		"Copied": "Kinopya!"
 	}
 }

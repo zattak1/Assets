@@ -58,7 +58,12 @@
 		"ChooseCurrency": "Roghnaigh airgeadra",
 		"YouCanSendUpTo": "Is f\u00e9idir leat suas le {{amount}} {{symbol}} a sheoladh",
 		"Send": "Seol",
-		"EnterAmount": "cuir isteach m\u00e9id"
+		"EnterAmount": "cuir isteach m\u00e9id",
+		"confirm": {
+			"AutoCharge": "Ar mhaith leat an modh \u00edoca\u00edochta at\u00e1 s\u00e1bh\u00e1ilte agat ar chomhad a \u00fas\u00e1id chun {{amount}} ar {{reason}} a \u00edoc?",
+			"AutoChargeToSpecificPaymentMethod": "Ar mhaith leat do mhodh \u00edoca\u00edochta s\u00e1bh\u00e1ilte ar chomhad a chr\u00edochna\u00edonn le {{last4}} a \u00fas\u00e1id chun {{amount}} a \u00edoc as {{reason}} ?",
+			"AutoChargeToSpecificWeb3": "Ar mhaith leat do li\u00fantas {{token}} a \u00fas\u00e1id ar {{chainName}} \u00f3 {{address}} chun {{amount}} a \u00edoc as {{reason}} ?"
+		}
 	},
 	"credits": {
 		"InviteAcceptedBy": "Glacadh le cuireadh le {{invitedUserName}}",
@@ -701,5 +706,27 @@
 	"discounts": {
 		"PercentDescription": "T\u00e1 lascaine {{percent}} d\u00edghlas\u00e1ilte agat.",
 		"FormattedDescription": "T\u00e1 lascaine d\u00edghlas\u00e1ilte agat chun {{format}} a sh\u00e1bh\u00e1il"
+	},
+	"invoice": {
+		"AmountPlaceholder": "0.00",
+		"pending": "Ar feitheamh",
+		"paid": "\u00cdoctha",
+		"expired": "Imithe in \u00e9ag",
+		"canceled": "Cealaithe",
+		"NewInvoice": "Sonrasc Nua",
+		"CreateInvoice": "Cruthaigh Sonrasc",
+		"DefaultTitle": "Sonrasc",
+		"TitlePlaceholder": "Cad chuige seo?",
+		"PayWithCryptoWallet": "\u00cdoc le spar\u00e1n cripte",
+		"SelectToken": "Roghnaigh comhartha le h\u00edoc leis",
+		"Authorize": "\u00dadar\u00fa",
+		"PayNow": "\u00cdoc anois",
+		"SwitchChain": "Athraigh go {{chainName}} le do thoil",
+		"SwitchNetwork": "L\u00edonra Athraigh",
+		"ApprovingToken": "Ag cead\u00fa an chomhartha...",
+		"NoAcceptedTokens": "N\u00edor aims\u00edodh aon chomhartha\u00ed glactha i do spar\u00e1n",
+		"PayWithBitcoin": "\u00cdoc le Bitcoin",
+		"CopyLightningInvoice": "C\u00f3ipe\u00e1il Sonrasc Lightning",
+		"Copied": "C\u00f3ipe\u00e1ilte!"
 	}
 }

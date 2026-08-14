@@ -58,7 +58,12 @@
 		"ChooseCurrency": "Aukeratu moneta bat",
 		"YouCanSendUpTo": "Gehienez {{amount}} {{symbol}} bidal ditzakezu",
 		"Send": "Bidali",
-		"EnterAmount": "sartu zenbatekoa"
+		"EnterAmount": "sartu zenbatekoa",
+		"confirm": {
+			"AutoCharge": "Gordetako ordainketa-metodoa erabili nahi al duzu {{reason}} truke {{amount}} ordaintzeko?",
+			"AutoChargeToSpecificPaymentMethod": "{{reason}} truke {{amount}} ordaintzeko, fitxategian gordetako ordainketa-metodoa {{last4}} zenbakiarekin amaitzen dena) erabili nahi al duzu?",
+			"AutoChargeToSpecificWeb3": "Nahi al duzu zure {{token}} hobaria {{address}} {{chainName}} erabili {{reason}} truke {{amount}} ordaintzeko?"
+		}
 	},
 	"credits": {
 		"InviteAcceptedBy": "{{invitedUserName}} gonbidapena onartu du",
@@ -701,5 +706,27 @@
 	"discounts": {
 		"PercentDescription": "{{percent}} deskontua lortu duzu.",
 		"FormattedDescription": "{{format}} aurrezteko deskontua desblokeatu duzu"
+	},
+	"invoice": {
+		"AmountPlaceholder": "0.00",
+		"pending": "Zain",
+		"paid": "Ordainduta",
+		"expired": "Iraungita",
+		"canceled": "Ezeztatuta",
+		"NewInvoice": "Faktura berria",
+		"CreateInvoice": "Sortu faktura",
+		"DefaultTitle": "Faktura",
+		"TitlePlaceholder": "Zertarako da hau?",
+		"PayWithCryptoWallet": "Ordaindu kriptografia-zorroarekin",
+		"SelectToken": "Hautatu ordaintzeko token bat",
+		"Authorize": "Baimendu",
+		"PayNow": "Ordaindu orain",
+		"SwitchChain": "Mesedez, aldatu {{chainName}}",
+		"SwitchNetwork": "Sare Aldatua",
+		"ApprovingToken": "Tokena onartzen...",
+		"NoAcceptedTokens": "Ez da token onarturik aurkitu zure zorroan",
+		"PayWithBitcoin": "Ordaindu Bitcoin-ekin",
+		"CopyLightningInvoice": "Kopiatu Lightning faktura",
+		"Copied": "Kopiatu da!"
 	}
 }

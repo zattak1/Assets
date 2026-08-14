@@ -58,7 +58,12 @@
 		"ChooseCurrency": "Valyuta se\u00e7in",
 		"YouCanSendUpTo": "{{amount}} {{symbol}} q\u0259d\u0259r g\u00f6nd\u0259r\u0259 bil\u0259rsiniz",
 		"Send": "G\u00f6nd\u0259r",
-		"EnterAmount": "m\u0259bl\u0259\u011fi daxil edin"
+		"EnterAmount": "m\u0259bl\u0259\u011fi daxil edin",
+		"confirm": {
+			"AutoCharge": "{{reason}} \u00fc\u00e7\u00fcn {{amount}} \u00f6d\u0259m\u0259k \u00fc\u00e7\u00fcn faylda yadda saxlan\u0131lan \u00f6d\u0259ni\u015f metodunuzdan istifad\u0259 etm\u0259k ist\u0259rdinizmi?",
+			"AutoChargeToSpecificPaymentMethod": "{{reason}} \u0259v\u0259zin\u0259 {{amount}} \u00f6d\u0259m\u0259k \u00fc\u00e7\u00fcn {{last4}} il\u0259 bit\u0259n faylda yadda saxlan\u0131lan \u00f6d\u0259ni\u015f metodunuzdan istifad\u0259 etm\u0259k ist\u0259rdinizmi?",
+			"AutoChargeToSpecificWeb3": "{{address}} -d\u0259n {{chainName}} -\u0259 d\u00fc\u015f\u0259n {{token}} g\u00fcz\u0259\u015ftinizi {{reason}} \u0259 qar\u015f\u0131 {{amount}} \u00f6d\u0259m\u0259k \u00fc\u00e7\u00fcn istifad\u0259 etm\u0259k ist\u0259rdinizmi?"
+		}
 	},
 	"credits": {
 		"InviteAcceptedBy": "D\u0259v\u0259t {{invitedUserName}} t\u0259r\u0259find\u0259n q\u0259bul edildi",
@@ -701,5 +706,27 @@
 	"discounts": {
 		"PercentDescription": "{{percent}} endirimd\u0259n yararland\u0131n\u0131z.",
 		"FormattedDescription": "{{format}} q\u0259na\u0259t etm\u0259k \u00fc\u00e7\u00fcn endirimd\u0259n yararland\u0131n\u0131z"
+	},
+	"invoice": {
+		"AmountPlaceholder": "0.00",
+		"pending": "G\u00f6zl\u0259nilir",
+		"paid": "\u00d6d\u0259ni\u015fli",
+		"expired": "M\u00fcdd\u0259ti bitib",
+		"canceled": "L\u0259\u011fv edildi",
+		"NewInvoice": "Yeni Faktura",
+		"CreateInvoice": "Faktura yarad\u0131n",
+		"DefaultTitle": "Faktura",
+		"TitlePlaceholder": "Bu n\u0259 \u00fc\u00e7\u00fcnd\u00fcr?",
+		"PayWithCryptoWallet": "Kripto c\u00fczdanla \u00f6d\u0259ni\u015f edin",
+		"SelectToken": "\u00d6d\u0259ni\u015f etm\u0259k \u00fc\u00e7\u00fcn bir token se\u00e7in",
+		"Authorize": "S\u0259lahiyy\u0259t verin",
+		"PayNow": "\u0130ndi \u00f6d\u0259yin",
+		"SwitchChain": "Z\u0259hm\u0259t olmasa, {{chainName}} a ke\u00e7in",
+		"SwitchNetwork": "\u015e\u0259b\u0259k\u0259 ke\u00e7idi",
+		"ApprovingToken": "Token t\u0259sdiql\u0259nir...",
+		"NoAcceptedTokens": "C\u00fczdan\u0131n\u0131zda q\u0259bul edilmi\u015f token tap\u0131lmad\u0131",
+		"PayWithBitcoin": "Bitcoin il\u0259 \u00f6d\u0259ni\u015f edin",
+		"CopyLightningInvoice": "Y\u0131ld\u0131r\u0131m Fakturas\u0131n\u0131 Kopyalay\u0131n",
+		"Copied": "Kopyaland\u0131!"
 	}
 }

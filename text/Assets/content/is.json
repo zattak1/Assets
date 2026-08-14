@@ -58,7 +58,12 @@
 		"ChooseCurrency": "Veldu gjaldmi\u00f0il",
 		"YouCanSendUpTo": "\u00de\u00fa getur sent allt a\u00f0 {{amount}} {{symbol}}",
 		"Send": "Senda",
-		"EnterAmount": "sl\u00e1\u00f0u inn upph\u00e6\u00f0"
+		"EnterAmount": "sl\u00e1\u00f0u inn upph\u00e6\u00f0",
+		"confirm": {
+			"AutoCharge": "Viltu nota vista\u00f0a grei\u00f0slum\u00e1ta \u00feinn til a\u00f0 grei\u00f0a {{amount}} fyrir {{reason}} ?",
+			"AutoChargeToSpecificPaymentMethod": "Viltu nota vista\u00f0a grei\u00f0slum\u00e1ta \u00feinn sem endar \u00e1 {{last4}} til a\u00f0 grei\u00f0a {{amount}} fyrir {{reason}} ?",
+			"AutoChargeToSpecificWeb3": "Viltu nota {{token}} afsl\u00e1ttinn \u00feinn af {{chainName}} \u00far {{address}} til a\u00f0 grei\u00f0a {{amount}} fyrir {{reason}} ?"
+		}
 	},
 	"credits": {
 		"InviteAcceptedBy": "Bo\u00f0 sam\u00feykkt af {{invitedUserName}}",
@@ -701,5 +706,27 @@
 	"discounts": {
 		"PercentDescription": "\u00de\u00fa hefur fengi\u00f0 {{percent}} afsl\u00e1tt.",
 		"FormattedDescription": "\u00de\u00fa hefur opna\u00f0 afsl\u00e1tt til a\u00f0 spara {{format}}"
+	},
+	"invoice": {
+		"AmountPlaceholder": "0.00",
+		"pending": "\u00cd bi\u00f0",
+		"paid": "Greitt",
+		"expired": "\u00datrunni\u00f0",
+		"canceled": "Afl\u00fdst",
+		"NewInvoice": "N\u00fdr reikningur",
+		"CreateInvoice": "B\u00faa til reikning",
+		"DefaultTitle": "Reikningur",
+		"TitlePlaceholder": "Til hvers er \u00feetta?",
+		"PayWithCryptoWallet": "Borga me\u00f0 dulritunarveski",
+		"SelectToken": "Veldu t\u00e1kn til a\u00f0 grei\u00f0a me\u00f0",
+		"Authorize": "Heimila",
+		"PayNow": "Borga\u00f0u n\u00fana",
+		"SwitchChain": "Vinsamlegast skiptu yfir \u00ed {{chainName}}",
+		"SwitchNetwork": "Skipta neti",
+		"ApprovingToken": "Sam\u00feykkir au\u00f0kenni...",
+		"NoAcceptedTokens": "Engin vi\u00f0urkennd t\u00e1kn fundust \u00ed veskinu \u00fe\u00ednu",
+		"PayWithBitcoin": "Borga me\u00f0 Bitcoin",
+		"CopyLightningInvoice": "Afrita Lightning reikning",
+		"Copied": "Afrita\u00f0!"
 	}
 }

@@ -58,7 +58,12 @@
 		"ChooseCurrency": "V\u00e1lasszon p\u00e9nznemet",
 		"YouCanSendUpTo": "Legfeljebb {{amount}} {{symbol}} et k\u00fcldhet",
 		"Send": "K\u00fcld",
-		"EnterAmount": "adja meg az \u00f6sszeget"
+		"EnterAmount": "adja meg az \u00f6sszeget",
+		"confirm": {
+			"AutoCharge": "Szeretn\u00e9d a mentett fizet\u00e9si m\u00f3dodat haszn\u00e1lni {{amount}} \u00e9rt {{reason}} \u00e9rt?",
+			"AutoChargeToSpecificPaymentMethod": "Szeretn\u00e9d {{last4}} re v\u00e9gz\u0151d\u0151, mentett fizet\u00e9si m\u00f3dodat haszn\u00e1lni {{amount}} kifizet\u00e9s\u00e9hez {{reason}} t\u00e9tel\u00e9rt?",
+			"AutoChargeToSpecificWeb3": "Szeretn\u00e9d {{token}} es keretedet {{chainName}} esre felhaszn\u00e1lni {{address}} esr\u0151l {{amount}} esre {{reason}} as\u00e9rt?"
+		}
 	},
 	"credits": {
 		"InviteAcceptedBy": "A megh\u00edv\u00e1st {{invitedUserName}} fogadta el",
@@ -701,5 +706,27 @@
 	"discounts": {
 		"PercentDescription": "{{percent}} es kedvezm\u00e9nyt kapt\u00e1l.",
 		"FormattedDescription": "{{format}} megtakar\u00edt\u00e1si kedvezm\u00e9nyt oldott fel"
+	},
+	"invoice": {
+		"AmountPlaceholder": "0.00",
+		"pending": "F\u00fcgg\u0151ben lev\u0151",
+		"paid": "Fizetett",
+		"expired": "Lej\u00e1rt",
+		"canceled": "Lemondva",
+		"NewInvoice": "\u00daj sz\u00e1mla",
+		"CreateInvoice": "Sz\u00e1mla l\u00e9trehoz\u00e1sa",
+		"DefaultTitle": "Sz\u00e1mla",
+		"TitlePlaceholder": "Mire val\u00f3 ez?",
+		"PayWithCryptoWallet": "Fizessen kriptovaluta-t\u00e1rc\u00e1val",
+		"SelectToken": "V\u00e1lasszon egy tokent a fizet\u00e9shez",
+		"Authorize": "Enged\u00e9lyez\u00e9s",
+		"PayNow": "Fizessen most",
+		"SwitchChain": "K\u00e9rj\u00fck, v\u00e1ltson {{chainName}} re",
+		"SwitchNetwork": "H\u00e1l\u00f3zatv\u00e1lt\u00e1s",
+		"ApprovingToken": "Token j\u00f3v\u00e1hagy\u00e1sa...",
+		"NoAcceptedTokens": "Nem tal\u00e1lhat\u00f3k elfogadott tokenek a t\u00e1rc\u00e1dban",
+		"PayWithBitcoin": "Fizessen Bitcoinnal",
+		"CopyLightningInvoice": "Lightning-sz\u00e1mla m\u00e1sol\u00e1sa",
+		"Copied": "M\u00e1solva!"
 	}
 }

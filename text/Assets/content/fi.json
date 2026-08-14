@@ -58,7 +58,12 @@
 		"ChooseCurrency": "Valitse valuutta",
 		"YouCanSendUpTo": "Voit l\u00e4hett\u00e4\u00e4 enint\u00e4\u00e4n {{amount}} {{symbol}}",
 		"Send": "L\u00e4hett\u00e4\u00e4",
-		"EnterAmount": "Sy\u00f6t\u00e4 summa"
+		"EnterAmount": "Sy\u00f6t\u00e4 summa",
+		"confirm": {
+			"AutoCharge": "Haluatko k\u00e4ytt\u00e4\u00e4 tallennettua maksutapaasi maksaaksesi {{amount}} kappaleelta {{reason}} ?",
+			"AutoChargeToSpecificPaymentMethod": "Haluatko k\u00e4ytt\u00e4\u00e4 tiedostoon tallennettua maksutapaasi, joka p\u00e4\u00e4ttyy numeroon {{last4}} , maksaaksesi {{amount}} kohteesta {{reason}} ?",
+			"AutoChargeToSpecificWeb3": "Haluatko k\u00e4ytt\u00e4\u00e4 {{token}} kiinti\u00f6si tilille {{chainName}} tililt\u00e4 {{address}} maksaaksesi tilille {{amount}} tilille {{reason}} ?"
+		}
 	},
 	"credits": {
 		"InviteAcceptedBy": "Kutsun hyv\u00e4ksyi {{invitedUserName}}",
@@ -701,5 +706,27 @@
 	"discounts": {
 		"PercentDescription": "Olet avannut {{percent}} alennuksen.",
 		"FormattedDescription": "Olet avannut alennuksen, jolla voit s\u00e4\u00e4st\u00e4\u00e4 {{format}}"
+	},
+	"invoice": {
+		"AmountPlaceholder": "0.00",
+		"pending": "Odottaa",
+		"paid": "Maksettu",
+		"expired": "Vanhentunut",
+		"canceled": "Peruutettu",
+		"NewInvoice": "Uusi lasku",
+		"CreateInvoice": "Luo lasku",
+		"DefaultTitle": "Laskuttaa",
+		"TitlePlaceholder": "Mihin t\u00e4m\u00e4 on tarkoitettu?",
+		"PayWithCryptoWallet": "Maksa kryptolompakolla",
+		"SelectToken": "Valitse maksuv\u00e4line",
+		"Authorize": "Valtuuta",
+		"PayNow": "Maksa nyt",
+		"SwitchChain": "Vaihda numeroon {{chainName}}",
+		"SwitchNetwork": "Vaihda verkkoa",
+		"ApprovingToken": "Hyv\u00e4ksyt\u00e4\u00e4n tunnusta...",
+		"NoAcceptedTokens": "Lompakostasi ei l\u00f6ytynyt hyv\u00e4ksyttyj\u00e4 tokeneita",
+		"PayWithBitcoin": "Maksa Bitcoinilla",
+		"CopyLightningInvoice": "Kopioi Lightning-lasku",
+		"Copied": "Kopioitu!"
 	}
 }

@@ -58,7 +58,12 @@
 		"ChooseCurrency": "Scegli una valuta",
 		"YouCanSendUpTo": "Puoi inviare fino a {{amount}} {{symbol}}",
 		"Send": "Inviare",
-		"EnterAmount": "inserire l&#39;importo"
+		"EnterAmount": "inserire l&#39;importo",
+		"confirm": {
+			"AutoCharge": "Desideri utilizzare il metodo di pagamento salvato per pagare {{amount}} per {{reason}} ?",
+			"AutoChargeToSpecificPaymentMethod": "Desideri utilizzare il metodo di pagamento salvato nel tuo file, che termina con {{last4}} , per pagare {{amount}} per {{reason}} ?",
+			"AutoChargeToSpecificWeb3": "Vorresti utilizzare il tuo sconto {{token}} sul {{chainName}} dal {{address}} per pagare {{amount}} per {{reason}} ?"
+		}
 	},
 	"credits": {
 		"InviteAcceptedBy": "Invito accettato da {{invitedUserName}}",
@@ -701,5 +706,27 @@
 	"discounts": {
 		"PercentDescription": "Hai sbloccato uno sconto {{percent}} .",
 		"FormattedDescription": "Hai sbloccato uno sconto che ti permette di risparmiare {{format}}"
+	},
+	"invoice": {
+		"AmountPlaceholder": "0.00",
+		"pending": "In attesa di",
+		"paid": "Pagato",
+		"expired": "Scaduto",
+		"canceled": "Annullato",
+		"NewInvoice": "Nuova fattura",
+		"CreateInvoice": "Crea fattura",
+		"DefaultTitle": "Fattura",
+		"TitlePlaceholder": "A cosa serve?",
+		"PayWithCryptoWallet": "Paga con portafoglio di criptovalute",
+		"SelectToken": "Seleziona un gettone per pagare",
+		"Authorize": "Autorizzare",
+		"PayNow": "Paga ora",
+		"SwitchChain": "Si prega di passare al {{chainName}}",
+		"SwitchNetwork": "Rete di commutazione",
+		"ApprovingToken": "Approvazione del token in corso...",
+		"NoAcceptedTokens": "Nessun token accettato trovato nel tuo portafoglio",
+		"PayWithBitcoin": "Paga con Bitcoin",
+		"CopyLightningInvoice": "Copia fattura Lightning",
+		"Copied": "Copiato!"
 	}
 }

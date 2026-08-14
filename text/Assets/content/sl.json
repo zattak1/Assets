@@ -58,7 +58,12 @@
 		"ChooseCurrency": "Izberite valuto",
 		"YouCanSendUpTo": "Po\u0161ljete lahko do {{amount}} {{symbol}}",
 		"Send": "Po\u0161lji",
-		"EnterAmount": "vnesite znesek"
+		"EnterAmount": "vnesite znesek",
+		"confirm": {
+			"AutoCharge": "Ali \u017eelite uporabiti shranjeno pla\u010dilno metodo za pla\u010dilo {{amount}} za {{reason}} ?",
+			"AutoChargeToSpecificPaymentMethod": "Ali \u017eelite uporabiti shranjeno pla\u010dilno metodo, ki se kon\u010da na {{last4}} , za pla\u010dilo {{amount}} za {{reason}} ?",
+			"AutoChargeToSpecificWeb3": "Bi radi uporabili svojo omejitev {{token}} za {{chainName}} od {{address}} za pla\u010dilo {{amount}} za {{reason}} ?"
+		}
 	},
 	"credits": {
 		"InviteAcceptedBy": "Povabilo je sprejelo {{invitedUserName}}",
@@ -701,5 +706,27 @@
 	"discounts": {
 		"PercentDescription": "Odklenili ste popust v {{percent}} .",
 		"FormattedDescription": "Odklenili ste popust in prihranili {{format}}"
+	},
+	"invoice": {
+		"AmountPlaceholder": "0.00",
+		"pending": "V teku",
+		"paid": "Pla\u010dano",
+		"expired": "Poteklo",
+		"canceled": "Preklicano",
+		"NewInvoice": "Nov ra\u010dun",
+		"CreateInvoice": "Ustvari ra\u010dun",
+		"DefaultTitle": "Ra\u010dun",
+		"TitlePlaceholder": "\u010cemu je to namenjeno?",
+		"PayWithCryptoWallet": "Pla\u010dajte s kripto denarnico",
+		"SelectToken": "Izberite \u017eeton za pla\u010dilo",
+		"Authorize": "Avtoriziraj",
+		"PayNow": "Pla\u010daj zdaj",
+		"SwitchChain": "Prosim, preklopite na {{chainName}}",
+		"SwitchNetwork": "Preklopi omre\u017eje",
+		"ApprovingToken": "Odobritev \u017eetona ...",
+		"NoAcceptedTokens": "V va\u0161i denarnici ni bilo najdenih sprejetih \u017eetonov",
+		"PayWithBitcoin": "Pla\u010daj z Bitcoinom",
+		"CopyLightningInvoice": "Kopiraj ra\u010dun Lightning",
+		"Copied": "Kopirano!"
 	}
 }

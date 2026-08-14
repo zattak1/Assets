@@ -58,7 +58,12 @@
 		"ChooseCurrency": "Bir para birimi se\u00e7in",
 		"YouCanSendUpTo": "{{amount}} {{symbol}} kadar g\u00f6nderebilirsiniz",
 		"Send": "G\u00f6ndermek",
-		"EnterAmount": "miktar\u0131 girin"
+		"EnterAmount": "miktar\u0131 girin",
+		"confirm": {
+			"AutoCharge": "{{reason}} i\u00e7in {{amount}} \u00f6demek \u00fczere kay\u0131tl\u0131 \u00f6deme y\u00f6nteminizi kullanmak ister misiniz?",
+			"AutoChargeToSpecificPaymentMethod": "{{reason}} i\u00e7in {{amount}} tutar\u0131ndaki \u00f6demeyi, kay\u0131tl\u0131 ve sonu {{last4}} ile biten \u00f6deme y\u00f6nteminizle yapmak ister misiniz?",
+			"AutoChargeToSpecificWeb3": "{{address}} {{chainName}} kadar olan \u00f6demeleriniz i\u00e7in {{token}} hakk\u0131n\u0131z\u0131 kullanarak {{amount}} \u00f6demesini {{reason}} i\u00e7in yapmak ister misiniz?"
+		}
 	},
 	"credits": {
 		"InviteAcceptedBy": "Davet {{invitedUserName}} taraf\u0131ndan kabul edildi",
@@ -701,5 +706,27 @@
 	"discounts": {
 		"PercentDescription": "{{percent}} indirimden yararland\u0131n\u0131z.",
 		"FormattedDescription": "{{format}} tasarruf etmenizi sa\u011flayacak bir indirimi etkinle\u015ftirdiniz."
+	},
+	"invoice": {
+		"AmountPlaceholder": "0.00",
+		"pending": "Ask\u0131da olmas\u0131",
+		"paid": "Paral\u0131",
+		"expired": "G\u00fcn\u00fc ge\u00e7mi\u015f",
+		"canceled": "\u0130ptal edildi",
+		"NewInvoice": "Yeni Fatura",
+		"CreateInvoice": "Fatura Olu\u015ftur",
+		"DefaultTitle": "Fatura",
+		"TitlePlaceholder": "Bu ne i\u00e7in?",
+		"PayWithCryptoWallet": "Kripto c\u00fczdan\u0131yla \u00f6deme yap\u0131n",
+		"SelectToken": "\u00d6deme yapmak i\u00e7in bir token se\u00e7in.",
+		"Authorize": "Yetkilendirmek",
+		"PayNow": "\u015eimdi \u00f6de",
+		"SwitchChain": "L\u00fctfen {{chainName}} ge\u00e7in.",
+		"SwitchNetwork": "Anahtar A\u011f\u0131",
+		"ApprovingToken": "Token onaylan\u0131yor...",
+		"NoAcceptedTokens": "C\u00fczdan\u0131n\u0131zda kabul edilen token bulunamad\u0131.",
+		"PayWithBitcoin": "Bitcoin ile \u00f6deme yap\u0131n",
+		"CopyLightningInvoice": "Lightning Faturas\u0131n\u0131 Kopyala",
+		"Copied": "Kopyaland\u0131!"
 	}
 }

@@ -58,7 +58,12 @@
 		"ChooseCurrency": "Choisissez une devise",
 		"YouCanSendUpTo": "Vous pouvez envoyer jusqu&#39;\u00e0 {{amount}} {{symbol}}",
 		"Send": "Envoyer",
-		"EnterAmount": "entrer le montant"
+		"EnterAmount": "entrer le montant",
+		"confirm": {
+			"AutoCharge": "Souhaitez-vous utiliser votre mode de paiement enregistr\u00e9 pour payer {{amount}} pour {{reason}} ?",
+			"AutoChargeToSpecificPaymentMethod": "Souhaitez-vous utiliser votre mode de paiement enregistr\u00e9 se terminant par {{last4}} pour payer {{amount}} pour {{reason}} ?",
+			"AutoChargeToSpecificWeb3": "Souhaiteriez-vous utiliser votre allocation {{token}} sur {{chainName}} de {{address}} pour payer {{amount}} pour {{reason}} ?"
+		}
 	},
 	"credits": {
 		"InviteAcceptedBy": "Invitation accept\u00e9e par {{invitedUserName}}",
@@ -701,5 +706,27 @@
 	"discounts": {
 		"PercentDescription": "Vous avez d\u00e9bloqu\u00e9 une r\u00e9duction {{percent}} .",
 		"FormattedDescription": "Vous avez d\u00e9bloqu\u00e9 une r\u00e9duction et \u00e9conomisez {{format}}"
+	},
+	"invoice": {
+		"AmountPlaceholder": "0.00",
+		"pending": "En attente",
+		"paid": "Pay\u00e9",
+		"expired": "Expir\u00e9",
+		"canceled": "Annul\u00e9",
+		"NewInvoice": "Nouvelle facture",
+		"CreateInvoice": "Cr\u00e9er une facture",
+		"DefaultTitle": "Facture",
+		"TitlePlaceholder": "\u00c0 quoi \u00e7a sert ?",
+		"PayWithCryptoWallet": "Payer avec un portefeuille crypto",
+		"SelectToken": "S\u00e9lectionnez un jeton pour payer avec",
+		"Authorize": "Autoriser",
+		"PayNow": "Payez maintenant",
+		"SwitchChain": "Veuillez passer au {{chainName}}",
+		"SwitchNetwork": "R\u00e9seau de commutation",
+		"ApprovingToken": "Approbation du jeton...",
+		"NoAcceptedTokens": "Aucun jeton accept\u00e9 n&#39;a \u00e9t\u00e9 trouv\u00e9 dans votre portefeuille.",
+		"PayWithBitcoin": "Payez en Bitcoin",
+		"CopyLightningInvoice": "Copie de la facture Lightning",
+		"Copied": "Copi\u00e9 !"
 	}
 }

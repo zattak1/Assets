@@ -58,7 +58,12 @@
 		"ChooseCurrency": "\ud1b5\ud654\ub97c \uc120\ud0dd\ud558\uc138\uc694",
 		"YouCanSendUpTo": "\ucd5c\ub300 {{amount}} {{symbol}} \uae4c\uc9c0 \ubcf4\ub0bc \uc218 \uc788\uc2b5\ub2c8\ub2e4.",
 		"Send": "\ubcf4\ub0b4\ub2e4",
-		"EnterAmount": "\uae08\uc561\uc744 \uc785\ub825\ud558\uc138\uc694"
+		"EnterAmount": "\uae08\uc561\uc744 \uc785\ub825\ud558\uc138\uc694",
+		"confirm": {
+			"AutoCharge": "{{reason}} \uc5d0 {{amount}} \uacb0\uc81c\ud558\uc2e4 \ub54c, \ub4f1\ub85d\ud574 \ub450\uc2e0 \uacb0\uc81c \uc218\ub2e8\uc744 \uc0ac\uc6a9\ud558\uc2dc\uaca0\uc2b5\ub2c8\uae4c?",
+			"AutoChargeToSpecificPaymentMethod": "{{reason}} \uc5d0 \ub300\ud55c {{amount}} \uacb0\uc81c\ub97c \uc704\ud574, \ub4f1\ub85d \uc2dc \ub4f1\ub85d\ud558\uc2e0 \uacb0\uc81c \uc218\ub2e8(\ub05d\uc790\ub9ac {{last4}} \ub85c \ub05d\ub098\ub294 \uacbd\uc6b0)\uc744 \uc0ac\uc6a9\ud558\uc2dc\uaca0\uc2b5\ub2c8\uae4c?",
+			"AutoChargeToSpecificWeb3": "{{address}} \uc758 {{chainName}} \uc5d0 \ub300\ud55c {{token}} \uacf5\uc81c\uc561\uc744 \uc0ac\uc6a9\ud558\uc5ec {{reason}} \uc758 {{amount}} \uc9c0\ubd88\ud558\uc2dc\uaca0\uc2b5\ub2c8\uae4c?"
+		}
 	},
 	"credits": {
 		"InviteAcceptedBy": "{{invitedUserName}} \uc5d0\uc11c \ucd08\ub300 \uc218\ub77d",
@@ -701,5 +706,27 @@
 	"discounts": {
 		"PercentDescription": "{{percent}} \ud560\uc778 \ud61c\ud0dd\uc744 \ubc1b\uc73c\uc168\uc2b5\ub2c8\ub2e4.",
 		"FormattedDescription": "{{format}} \uc808\uc57d\ud560 \uc218 \uc788\ub294 \ud560\uc778 \ucfe0\ud3f0\uc744 \ubc1b\uc73c\uc168\uc2b5\ub2c8\ub2e4."
+	},
+	"invoice": {
+		"AmountPlaceholder": "0.00",
+		"pending": "\ubcf4\ub958 \uc911",
+		"paid": "\uc720\uae09\uc758",
+		"expired": "\ub9cc\ub8cc\ub428",
+		"canceled": "\ucde8\uc18c",
+		"NewInvoice": "\uc0c8 \uc1a1\uc7a5",
+		"CreateInvoice": "\uc1a1\uc7a5 \uc0dd\uc131",
+		"DefaultTitle": "\uc1a1\uc7a5",
+		"TitlePlaceholder": "\uc774\uac74 \ubb34\uc5c7\uc5d0 \uc4f0\ub294 \uac74\uac00\uc694?",
+		"PayWithCryptoWallet": "\uc554\ud638\ud654\ud3d0 \uc9c0\uac11\uc73c\ub85c \uacb0\uc81c\ud558\uc138\uc694",
+		"SelectToken": "\uacb0\uc81c\uc5d0 \uc0ac\uc6a9\ud560 \ud1a0\ud070\uc744 \uc120\ud0dd\ud558\uc138\uc694",
+		"Authorize": "\uc2b9\uc778",
+		"PayNow": "\uc9c0\uae08 \uacb0\uc81c\ud558\uc138\uc694",
+		"SwitchChain": "{{chainName}} \ub85c \ubc14\uafd4\uc8fc\uc138\uc694",
+		"SwitchNetwork": "\uc2a4\uc704\uce58 \ub124\ud2b8\uc6cc\ud06c",
+		"ApprovingToken": "\ud1a0\ud070 \uc2b9\uc778 \uc911...",
+		"NoAcceptedTokens": "\uc9c0\uac11\uc5d0\uc11c \uc0ac\uc6a9 \uac00\ub2a5\ud55c \ud1a0\ud070\uc744 \ucc3e\uc744 \uc218 \uc5c6\uc2b5\ub2c8\ub2e4.",
+		"PayWithBitcoin": "\ube44\ud2b8\ucf54\uc778\uc73c\ub85c \uacb0\uc81c\ud558\uc138\uc694",
+		"CopyLightningInvoice": "\ub77c\uc774\ud2b8\ub2dd \uc778\ubcf4\uc774\uc2a4 \ubcf5\uc0ac",
+		"Copied": "\ubcf5\uc0ac\ud588\uc5b4\uc694!"
 	}
 }

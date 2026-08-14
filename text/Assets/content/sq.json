@@ -58,7 +58,12 @@
 		"ChooseCurrency": "Zgjidhni nj\u00eb monedh\u00eb",
 		"YouCanSendUpTo": "Mund t\u00eb d\u00ebrgoni deri n\u00eb {{amount}} {{symbol}}",
 		"Send": "D\u00ebrgo",
-		"EnterAmount": "shkruani shum\u00ebn"
+		"EnterAmount": "shkruani shum\u00ebn",
+		"confirm": {
+			"AutoCharge": "D\u00ebshironi t\u00eb p\u00ebrdorni metod\u00ebn tuaj t\u00eb ruajtur t\u00eb pages\u00ebs n\u00eb dosje p\u00ebr t\u00eb paguar {{amount}} p\u00ebr {{reason}} ?",
+			"AutoChargeToSpecificPaymentMethod": "D\u00ebshironi t\u00eb p\u00ebrdorni metod\u00ebn tuaj t\u00eb ruajtur t\u00eb pages\u00ebs q\u00eb mbaron me {{last4}} p\u00ebr t\u00eb paguar {{amount}} p\u00ebr {{reason}} ?",
+			"AutoChargeToSpecificWeb3": "A d\u00ebshironi t\u00eb p\u00ebrdorni zbritjen tuaj {{token}} n\u00eb {{chainName}} nga {{address}} p\u00ebr t\u00eb paguar {{amount}} p\u00ebr {{reason}} ?"
+		}
 	},
 	"credits": {
 		"InviteAcceptedBy": "Ftesa u pranua nga {{invitedUserName}}",
@@ -701,5 +706,27 @@
 	"discounts": {
 		"PercentDescription": "Ke zhbllokuar nj\u00eb zbritje {{percent}} .",
 		"FormattedDescription": "Ke zhbllokuar nj\u00eb zbritje p\u00ebr t\u00eb kursyer {{format}}"
+	},
+	"invoice": {
+		"AmountPlaceholder": "0.00",
+		"pending": "N\u00eb pritje",
+		"paid": "Paguar",
+		"expired": "Skaduar",
+		"canceled": "Anuluar",
+		"NewInvoice": "Fatur\u00eb e re",
+		"CreateInvoice": "Krijo Fatur\u00eb",
+		"DefaultTitle": "Fatur\u00eb",
+		"TitlePlaceholder": "P\u00ebr \u00e7far\u00eb \u00ebsht\u00eb kjo?",
+		"PayWithCryptoWallet": "Paguaj me portofolin kripto",
+		"SelectToken": "Zgjidhni nj\u00eb shenj\u00eb p\u00ebr t\u00eb paguar",
+		"Authorize": "Autorizo",
+		"PayNow": "Paguaj tani",
+		"SwitchChain": "Ju lutem kaloni n\u00eb {{chainName}}",
+		"SwitchNetwork": "Nd\u00ebrro rrjetin",
+		"ApprovingToken": "Duke miratuar shenj\u00ebn...",
+		"NoAcceptedTokens": "Nuk u gjet\u00ebn token\u00eb t\u00eb pranuar n\u00eb portofolin tuaj",
+		"PayWithBitcoin": "Paguaj me Bitcoin",
+		"CopyLightningInvoice": "Kopjo Fatur\u00ebn Lightning",
+		"Copied": "Kopjuar!"
 	}
 }

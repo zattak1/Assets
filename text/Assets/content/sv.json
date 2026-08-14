@@ -58,7 +58,12 @@
 		"ChooseCurrency": "V\u00e4lj en valuta",
 		"YouCanSendUpTo": "Du kan skicka upp till {{amount}} {{symbol}}",
 		"Send": "Skicka",
-		"EnterAmount": "ange belopp"
+		"EnterAmount": "ange belopp",
+		"confirm": {
+			"AutoCharge": "Vill du anv\u00e4nda din sparade betalningsmetod f\u00f6r att betala {{amount}} f\u00f6r {{reason}} ?",
+			"AutoChargeToSpecificPaymentMethod": "Vill du anv\u00e4nda din sparade betalningsmetod som slutar p\u00e5 {{last4}} f\u00f6r att betala {{amount}} f\u00f6r {{reason}} ?",
+			"AutoChargeToSpecificWeb3": "Vill du anv\u00e4nda din {{token}} kvot p\u00e5 {{chainName}} fr\u00e5n {{address}} f\u00f6r att betala {{amount}} f\u00f6r {{reason}} ?"
+		}
 	},
 	"credits": {
 		"InviteAcceptedBy": "Inbjudan accepteras av {{invitedUserName}}",
@@ -701,5 +706,27 @@
 	"discounts": {
 		"PercentDescription": "Du har l\u00e5st upp en {{percent}} rabatt.",
 		"FormattedDescription": "Du har l\u00e5st upp en rabatt f\u00f6r att spara {{format}}"
+	},
+	"invoice": {
+		"AmountPlaceholder": "0.00",
+		"pending": "I avvaktan p\u00e5",
+		"paid": "Betald",
+		"expired": "Utg\u00e5ngen",
+		"canceled": "Avbruten",
+		"NewInvoice": "Ny faktura",
+		"CreateInvoice": "Skapa faktura",
+		"DefaultTitle": "Faktura",
+		"TitlePlaceholder": "Vad \u00e4r detta till f\u00f6r?",
+		"PayWithCryptoWallet": "Betala med kryptopl\u00e5nbok",
+		"SelectToken": "V\u00e4lj en token att betala med",
+		"Authorize": "Godk\u00e4nna",
+		"PayNow": "Betala nu",
+		"SwitchChain": "V\u00e4nligen byt till {{chainName}}",
+		"SwitchNetwork": "V\u00e4xla n\u00e4tverk",
+		"ApprovingToken": "Godk\u00e4nner token...",
+		"NoAcceptedTokens": "Inga accepterade tokens hittades i din pl\u00e5nbok",
+		"PayWithBitcoin": "Betala med Bitcoin",
+		"CopyLightningInvoice": "Kopiera Lightning-faktura",
+		"Copied": "Kopierad!"
 	}
 }

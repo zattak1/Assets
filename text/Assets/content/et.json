@@ -58,7 +58,12 @@
 		"ChooseCurrency": "Valige valuuta",
 		"YouCanSendUpTo": "Saate saata kuni {{amount}} {{symbol}}",
 		"Send": "Saada",
-		"EnterAmount": "sisestage summa"
+		"EnterAmount": "sisestage summa",
+		"confirm": {
+			"AutoCharge": "Kas soovite kasutada oma salvestatud makseviisi, et maksta {{amount}} eest {{reason}} ?",
+			"AutoChargeToSpecificPaymentMethod": "Kas soovite kasutada oma salvestatud makseviisi, mis l\u00f5peb numbritega {{last4}} et maksta {{amount}} summas {{reason}} eest?",
+			"AutoChargeToSpecificWeb3": "Kas soovite kasutada oma {{token}} toetussummat {{chainName}} pealt {{address}} , et maksta {{amount}} {{reason}} eest?"
+		}
 	},
 	"credits": {
 		"InviteAcceptedBy": "Kutse v\u00f5ttis vastu {{invitedUserName}}",
@@ -701,5 +706,27 @@
 	"discounts": {
 		"PercentDescription": "Oled avanud {{percent}} allahindluse.",
 		"FormattedDescription": "Olete avanud allahindluse, millega saate s\u00e4\u00e4sta {{format}}"
+	},
+	"invoice": {
+		"AmountPlaceholder": "0.00",
+		"pending": "Ootel",
+		"paid": "Tasuline",
+		"expired": "Aegunud",
+		"canceled": "T\u00fchistatud",
+		"NewInvoice": "Uus arve",
+		"CreateInvoice": "Loo arve",
+		"DefaultTitle": "Arve",
+		"TitlePlaceholder": "Milleks see m\u00f5eldud on?",
+		"PayWithCryptoWallet": "Maksa kr\u00fcptorahakotiga",
+		"SelectToken": "Valige maksmiseks \u017eetoon",
+		"Authorize": "Volitamine",
+		"PayNow": "Maksa kohe",
+		"SwitchChain": "Palun l\u00fclitage sisse {{chainName}}",
+		"SwitchNetwork": "Vaheta v\u00f5rku",
+		"ApprovingToken": "Tokeni kinnitamine...",
+		"NoAcceptedTokens": "Teie rahakotist ei leitud aktsepteeritud tokeneid",
+		"PayWithBitcoin": "Maksa Bitcoiniga",
+		"CopyLightningInvoice": "Kopeeri v\u00e4lkarve",
+		"Copied": "Kopeeritud!"
 	}
 }

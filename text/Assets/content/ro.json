@@ -58,7 +58,12 @@
 		"ChooseCurrency": "Alege\u021bi o moned\u0103",
 		"YouCanSendUpTo": "Pute\u021bi trimite p\u00e2n\u0103 la {{amount}} {{symbol}}",
 		"Send": "Trimite",
-		"EnterAmount": "introduce\u021bi suma"
+		"EnterAmount": "introduce\u021bi suma",
+		"confirm": {
+			"AutoCharge": "Dori\u021bi s\u0103 utiliza\u021bi metoda de plat\u0103 salvat\u0103 \u00een fi\u0219ier pentru a pl\u0103ti {{amount}} la {{reason}} ?",
+			"AutoChargeToSpecificPaymentMethod": "Dori\u021bi s\u0103 utiliza\u021bi metoda de plat\u0103 salvat\u0103 \u00een fi\u0219ier, care se termin\u0103 \u00een {{last4}} , pentru a pl\u0103ti {{amount}} la {{reason}} ?",
+			"AutoChargeToSpecificWeb3": "Ai vrea s\u0103-\u021bi folose\u0219ti aloca\u021bia {{token}} pe {{chainName}} din {{address}} pentru a pl\u0103ti {{amount}} pentru {{reason}} ?"
+		}
 	},
 	"credits": {
 		"InviteAcceptedBy": "Invita\u021bie acceptat\u0103 de {{invitedUserName}}",
@@ -701,5 +706,27 @@
 	"discounts": {
 		"PercentDescription": "Ai deblocat o reducere de {{percent}} .",
 		"FormattedDescription": "Ai deblocat o reducere pentru a economisi {{format}}"
+	},
+	"invoice": {
+		"AmountPlaceholder": "0.00",
+		"pending": "\u00cen a\u0219teptare",
+		"paid": "Pl\u0103tit",
+		"expired": "Expirat",
+		"canceled": "Anulat",
+		"NewInvoice": "Factur\u0103 nou\u0103",
+		"CreateInvoice": "Crea\u021bi factur\u0103",
+		"DefaultTitle": "Factura",
+		"TitlePlaceholder": "Pentru ce este asta?",
+		"PayWithCryptoWallet": "Pl\u0103te\u0219te cu portofelul cripto",
+		"SelectToken": "Selecta\u021bi un token cu care s\u0103 pl\u0103ti\u021bi",
+		"Authorize": "Autoriza",
+		"PayNow": "Pl\u0103te\u0219te acum",
+		"SwitchChain": "V\u0103 rug\u0103m s\u0103 trece\u021bi la {{chainName}}",
+		"SwitchNetwork": "Comutare re\u021bea",
+		"ApprovingToken": "Se aprob\u0103 tokenul...",
+		"NoAcceptedTokens": "Nu s-au g\u0103sit token-uri acceptate \u00een portofelul dvs.",
+		"PayWithBitcoin": "Pl\u0103te\u0219te cu Bitcoin",
+		"CopyLightningInvoice": "Copiere factur\u0103 Lightning",
+		"Copied": "Copiat!"
 	}
 }

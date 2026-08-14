@@ -58,7 +58,12 @@
 		"ChooseCurrency": "W\u00e4hlen Sie eine W\u00e4hrung",
 		"YouCanSendUpTo": "Sie k\u00f6nnen bis zu {{amount}} {{symbol}} senden",
 		"Send": "Schicken",
-		"EnterAmount": "Menge eingeben"
+		"EnterAmount": "Menge eingeben",
+		"confirm": {
+			"AutoCharge": "M\u00f6chten Sie Ihre hinterlegte Zahlungsmethode verwenden, um {{amount}} f\u00fcr {{reason}} zu bezahlen?",
+			"AutoChargeToSpecificPaymentMethod": "M\u00f6chten Sie Ihre hinterlegte Zahlungsmethode mit der Endung {{last4}} verwenden, um {{amount}} f\u00fcr {{reason}} zu bezahlen?",
+			"AutoChargeToSpecificWeb3": "M\u00f6chten Sie Ihren Freibetrag {{token}} f\u00fcr {{chainName}} aus {{address}} verwenden, um {{amount}} f\u00fcr {{reason}} zu bezahlen?"
+		}
 	},
 	"credits": {
 		"InviteAcceptedBy": "Einladung angenommen von {{invitedUserName}}",
@@ -701,5 +706,27 @@
 	"discounts": {
 		"PercentDescription": "Sie haben einen Rabatt {{percent}} freigeschaltet.",
 		"FormattedDescription": "Sie haben einen Rabatt freigeschaltet und sparen {{format}}"
+	},
+	"invoice": {
+		"AmountPlaceholder": "0.00",
+		"pending": "Ausstehend",
+		"paid": "Bezahlt",
+		"expired": "Abgelaufen",
+		"canceled": "Abgesagt",
+		"NewInvoice": "Neue Rechnung",
+		"CreateInvoice": "Rechnung erstellen",
+		"DefaultTitle": "Rechnung",
+		"TitlePlaceholder": "Wozu dient das?",
+		"PayWithCryptoWallet": "Mit einer Krypto-Wallet bezahlen",
+		"SelectToken": "W\u00e4hlen Sie ein Token zum Bezahlen aus.",
+		"Authorize": "Autorisieren",
+		"PayNow": "Jetzt bezahlen",
+		"SwitchChain": "Bitte schalten Sie auf {{chainName}} um.",
+		"SwitchNetwork": "Netzwerk-Switch",
+		"ApprovingToken": "Token wird genehmigt...",
+		"NoAcceptedTokens": "In Ihrer Wallet wurden keine akzeptierten Token gefunden.",
+		"PayWithBitcoin": "Mit Bitcoin bezahlen",
+		"CopyLightningInvoice": "Lightning-Rechnung kopieren",
+		"Copied": "Kopiert!"
 	}
 }

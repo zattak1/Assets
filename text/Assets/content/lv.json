@@ -58,7 +58,12 @@
 		"ChooseCurrency": "Izv\u0113lieties val\u016btu",
 		"YouCanSendUpTo": "Varat nos\u016bt\u012bt l\u012bdz pat {{amount}} {{symbol}}",
 		"Send": "S\u016bt\u012bt",
-		"EnterAmount": "ievadiet summu"
+		"EnterAmount": "ievadiet summu",
+		"confirm": {
+			"AutoCharge": "Vai v\u0113laties izmantot saglab\u0101to maks\u0101juma veidu, lai samaks\u0101tu {{amount}} par {{reason}} ?",
+			"AutoChargeToSpecificPaymentMethod": "Vai v\u0113laties izmantot fail\u0101 saglab\u0101to maks\u0101juma veidu, kas beidzas ar {{last4}} , lai samaks\u0101tu {{amount}} par {{reason}} ?",
+			"AutoChargeToSpecificWeb3": "Vai v\u0113laties izmantot savu {{token}} pabalstu {{chainName}} izdevumam no {{address}} , lai samaks\u0101tu {{amount}} par {{reason}} ?"
+		}
 	},
 	"credits": {
 		"InviteAcceptedBy": "Uzaicin\u0101jumu pie\u0146\u0113ma {{invitedUserName}}",
@@ -701,5 +706,27 @@
 	"discounts": {
 		"PercentDescription": "J\u016bs esat atblo\u0137\u0113jis {{percent}} atlaidi.",
 		"FormattedDescription": "J\u016bs esat atblo\u0137\u0113jis atlaidi, lai ietaup\u012btu {{format}}"
+	},
+	"invoice": {
+		"AmountPlaceholder": "0.00",
+		"pending": "Gaida apstiprin\u0101jumu",
+		"paid": "Apmaks\u0101ts",
+		"expired": "Beidzies der\u012bguma termi\u0146\u0161",
+		"canceled": "Atcelts",
+		"NewInvoice": "Jauns r\u0113\u0137ins",
+		"CreateInvoice": "Izveidot r\u0113\u0137inu",
+		"DefaultTitle": "R\u0113\u0137ins",
+		"TitlePlaceholder": "Kam tas paredz\u0113ts?",
+		"PayWithCryptoWallet": "Maks\u0101jiet ar kriptoval\u016btas maku",
+		"SelectToken": "Izv\u0113lieties \u017eetonu, ar kuru maks\u0101t",
+		"Authorize": "Autoriz\u0113t",
+		"PayNow": "Maks\u0101t t\u016bl\u012bt",
+		"SwitchChain": "L\u016bdzu, p\u0101rsl\u0113dzieties uz {{chainName}}",
+		"SwitchNetwork": "Komut\u0101cijas t\u012bkls",
+		"ApprovingToken": "Apstiprina pilnvaru...",
+		"NoAcceptedTokens": "J\u016bsu mak\u0101 nav atrasti pie\u0146emti \u017eetoni.",
+		"PayWithBitcoin": "Maks\u0101jiet ar Bitcoin",
+		"CopyLightningInvoice": "Kop\u0113t Lightning r\u0113\u0137inu",
+		"Copied": "Nokop\u0113ts!"
 	}
 }

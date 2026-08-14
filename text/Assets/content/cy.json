@@ -58,7 +58,12 @@
 		"ChooseCurrency": "Dewiswch arian cyfred",
 		"YouCanSendUpTo": "Gallwch anfon hyd at {{amount}} {{symbol}}",
 		"Send": "Anfon",
-		"EnterAmount": "nodwch y swm"
+		"EnterAmount": "nodwch y swm",
+		"confirm": {
+			"AutoCharge": "A hoffech chi ddefnyddio&#39;r dull talu sydd wedi&#39;i gadw ar ffeil i dalu {{amount}} am {{reason}} ?",
+			"AutoChargeToSpecificPaymentMethod": "A hoffech chi ddefnyddio&#39;r dull talu rydych chi wedi&#39;i gadw ar ffeil sy&#39;n gorffen gyda {{last4}} i dalu {{amount}} am {{reason}} ?",
+			"AutoChargeToSpecificWeb3": "A hoffech chi ddefnyddio&#39;ch lwfans {{token}} ar {{chainName}} o {{address}} i dalu {{amount}} am {{reason}} ?"
+		}
 	},
 	"credits": {
 		"InviteAcceptedBy": "Derbynnir y gwahoddiad erbyn {{invitedUserName}}",
@@ -701,5 +706,27 @@
 	"discounts": {
 		"PercentDescription": "Rydych chi wedi datgloi gostyngiad {{percent}} .",
 		"FormattedDescription": "Rydych chi wedi datgloi gostyngiad i arbed {{format}}"
+	},
+	"invoice": {
+		"AmountPlaceholder": "0.00",
+		"pending": "Yn yr arfaeth",
+		"paid": "Wedi&#39;i dalu",
+		"expired": "Wedi dod i ben",
+		"canceled": "Wedi&#39;i ganslo",
+		"NewInvoice": "Anfoneb Newydd",
+		"CreateInvoice": "Creu Anfoneb",
+		"DefaultTitle": "Anfoneb",
+		"TitlePlaceholder": "Beth yw pwrpas hyn?",
+		"PayWithCryptoWallet": "Talu gyda waled crypto",
+		"SelectToken": "Dewiswch docyn i dalu ag ef",
+		"Authorize": "Awdurdodi",
+		"PayNow": "Talu nawr",
+		"SwitchChain": "Newidiwch i {{chainName}} os gwelwch yn dda",
+		"SwitchNetwork": "Rhwydwaith Switsh",
+		"ApprovingToken": "Yn cymeradwyo tocyn...",
+		"NoAcceptedTokens": "Ni chanfuwyd unrhyw docynnau derbyniol yn eich waled",
+		"PayWithBitcoin": "Talu gyda Bitcoin",
+		"CopyLightningInvoice": "Cop\u00efo Anfoneb Lightning",
+		"Copied": "Wedi&#39;i gop\u00efo!"
 	}
 }
