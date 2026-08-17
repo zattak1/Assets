@@ -933,9 +933,8 @@ class Assets_Credits extends Base_Assets_Credits
 			'toStreamName' => $toStreamName,
 			'fromPublisherId' => $fromPublisherId,
 			'fromStreamName' => $fromStreamName,
-			'reason !=' => $leftReason,
-            'insertedTime >=' => $latestLeftPaidStream
-		))
+			'reason !=' => $leftReason
+		) + ($latestLeftPaidStream ? array('insertedTime >=' => $latestLeftPaidStream) : array()))
 		->ignoreCache()
 		->options(array("dontCache" => true))
 		->orderBy('insertedTime', true)
