@@ -69,13 +69,26 @@ function Assets_handleStripeSuccessfulCharge($amount, $currency, $metadata, $eve
 
 				$spentCredits = 0;
 				if ($needCredits) {
-					$spentCredits = Assets_Credits::spend(
-						$instructions['communityId'],
-						$needCredits,
-						$instructions['reason'],
-						$instructions['userId'],
-						$options
-					);
+					// Mirror Assets::pay: spend() requires a stream target;
+					// user-target payments (e.g. donations) must transfer().
+					if (!empty($options['toPublisherId']) and !empty($options['toStreamName'])) {
+						$spentCredits = Assets_Credits::spend(
+							$instructions['communityId'],
+							$needCredits,
+							$instructions['reason'],
+							$instructions['userId'],
+							$options
+						);
+					} else if (!empty($instructions['toUserId'])) {
+						$spentCredits = Assets_Credits::transfer(
+							$instructions['communityId'],
+							$needCredits,
+							$instructions['reason'],
+							$instructions['toUserId'],
+							$instructions['userId'],
+							$options
+						);
+					}
 				}
 				$success = (!$needCredits or $spentCredits > 0);
 
