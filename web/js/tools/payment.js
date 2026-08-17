@@ -29,7 +29,7 @@
 Q.Tool.define("Assets/payment", function (options) {
 	var tool = this;
 	var state = tool.state;
-	state.payments = state.toCapitalized();
+	state.payments = state.payments.toCapitalized();
 	var currency = state.currency.toLocaleLowerCase();
 
 	if (state.payments === 'Authnet' && currency !== 'usd') {
