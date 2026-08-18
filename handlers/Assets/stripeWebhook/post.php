@@ -176,6 +176,15 @@ function Assets_stripeWebhook_post($params = array())
 				$currency = Q::ifset($pi, 'currency',  null);
 
 				$metadata = _stripe_meta(Q::ifset($pi, 'metadata', null));
+
+				// App check FIRST, on the raw metadata: resolveMetadata
+				// throws on events with no userId, which is exactly the
+				// foreign-event case this check exists to skip quietly.
+				if (Q::ifset($metadata, 'app', null) !== Q::app()) {
+					Assets_Payments_Stripe::log('stripe', 'PI succeeded but wrong app');
+					break;
+				}
+
 				$metadata = Assets_Payments_Stripe::resolveMetadata(
 					$metadata, $event, 'payment_intent.succeeded'
 				);
@@ -183,12 +192,6 @@ function Assets_stripeWebhook_post($params = array())
 				// Inject chargeId for idempotency
 				$chargeObj          = Q::ifset($pi, 'charges', 'data', 0, null);
 				$metadata['chargeId'] = Q::ifset($chargeObj, 'id', $pi->id);
-
-				// App check
-				if (Q::ifset($metadata, 'app', null) !== Q::app()) {
-					Assets_Payments_Stripe::log('stripe', 'PI succeeded but wrong app');
-					break;
-				}
 
 				Assets_handleStripeSuccessfulCharge($amount, $currency, $metadata, $event);
 
