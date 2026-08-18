@@ -685,6 +685,14 @@ class Assets_Payments_Stripe extends Assets_Payments implements Assets_Payments_
 
 	static function log ($title, $message=null) {
 		Q::log(date('Y-m-d H:i:s').': '.$title, 'stripe');
+		if ($message instanceof Throwable) {
+			// Q::log renders exception objects without message, location
+			// or trace; render them explicitly so webhook catches are
+			// diagnosable from the log.
+			$message = get_class($message).': '.$message->getMessage()
+				. PHP_EOL . '  at ' . $message->getFile() . ':' . $message->getLine()
+				. PHP_EOL . $message->getTraceAsString();
+		}
 		if ($message) {
 			Q::log($message, 'stripe', array(
 				"maxLength" => 10000
