@@ -51,7 +51,8 @@ Q.exports(function () {
 			'{{#each bonuses}}' +
 			'	<div class="Assets_credits_bonus">{{{this}}}</div>' +
 			'{{/each}}' +
-			'<div class="Assets_credits_buy"><input name="amount" value="{{amount}}"> {{texts.Credits}}</div>' +
+			'<div class="Assets_credits_buy"><input name="amount" value="{{amount}}"> {{currency}}</div>' +
+			'<div class="Assets_credits_equivalent"></div>' +
 			'<button class="Q_button" name="buy">{{texts.PurchaseCredits}}</button>'
 		);
 
@@ -93,12 +94,29 @@ Q.exports(function () {
 				name: templateName,
 				fields: {
 					amount: options.amount,
+					currency: options.currency,
 					NotEnoughCredits: NotEnoughCredits,
 					bonuses: bonuses,
 					texts: Q.text.Assets.credits
 				}
 			},
 			onActivate: function (dialog) {
+				// The amount field is denominated in currency (see docblock),
+				// so show the credits equivalence live rather than mislabeling
+				// the input as credits (a 100x misstatement at purchase time).
+				var $amount = $("input[name=amount]", dialog);
+				var $equiv = $(".Assets_credits_equivalent", dialog);
+				function _updateEquivalent() {
+					var a = parseFloat($amount.val());
+					if (!a || a < 0 || !Q.Assets.Credits.convertToCredits) {
+						return $equiv.text("");
+					}
+					$equiv.text("= "
+						+ Q.Assets.Credits.convertToCredits(a, options.currency)
+						+ " " + Q.text.Assets.credits.Credits);
+				}
+				$amount.on("input", _updateEquivalent);
+				_updateEquivalent();
 				$("button[name=buy]", dialog).on(Q.Pointer.fastclick, function () {
 					paymentStarted = true;
 
