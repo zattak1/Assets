@@ -29,7 +29,11 @@
 Q.Tool.define("Assets/payment", function (options) {
 	var tool = this;
 	var state = tool.state;
-	var payments = state.payments.toCapitalized();
+	// Normalize in place: refresh() and implementPayment() read
+	// state.payments directly, and the template names ("Assets/payment/Stripe")
+	// and the Authnet token check are case-sensitive -- a lowercase default
+	// like the shipped 'stripe' must not survive past the constructor.
+	var payments = state.payments = state.payments.toCapitalized();
 	var currency = state.currency.toLocaleLowerCase();
 
 	if (payments === 'Authnet' && currency !== 'usd') {
