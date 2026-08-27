@@ -979,6 +979,91 @@ class Assets_Credits extends Base_Assets_Credits
 	}
 
 	/**
+	 * The reasons a credit row may carry, as declared by config.
+	 *
+	 * Two config trees are unioned, because both already exist and both are
+	 * server-side declarations that no request can extend:
+	 *
+	 *  - "Assets"/"credits"/"reasons" — the credit-ledger vocabulary, i.e. the
+	 *    values that legitimately appear in assets_credits.reason. The plugin
+	 *    ships every reason its own handlers and the Assets:: constants use.
+	 *  - "Assets"/"payments"/"reasons" — the gateway vocabulary the
+	 *    Assets/payment intent handler already validates against. An app that
+	 *    declares a reason there (e.g. a "Donation") means it for the whole
+	 *    payment flow, and Assets/pay is the same flow one step earlier.
+	 *
+	 * Apps extend either tree from their own config; nothing here is
+	 * reachable from $_REQUEST.
+	 *
+	 * @method reasons
+	 * @static
+	 * @return {array} reason key => its config value (shape varies by tree)
+	 */
+	static function reasons()
+	{
+		$credits = Q_Config::get('Assets', 'credits', 'reasons', array());
+		$payments = Q_Config::get('Assets', 'payments', 'reasons', array());
+		return array_merge(
+			is_array($credits) ? $credits : array(),
+			is_array($payments) ? $payments : array()
+		);
+	}
+
+	/**
+	 * Whether a reason is declared in config, and may therefore be written
+	 * into assets_credits.reason.
+	 *
+	 * NOTE: this deliberately tests for the KEY, not for a truthy value. The
+	 * Assets/payment intent handler uses
+	 * Q_Config::get('Assets','payments','reasons',$reason,null) as a boolean,
+	 * which makes a reason declared as {} decode to an empty array and fail as
+	 * if it were absent — a trap that has already cost a debugging session.
+	 * Presence is the question being asked here, so ask it directly.
+	 *
+	 * @method isValidReason
+	 * @static
+	 * @param {string} $reason
+	 * @return {boolean}
+	 */
+	static function isValidReason($reason)
+	{
+		if (!is_string($reason) or $reason === '') {
+			return false;
+		}
+		return array_key_exists($reason, self::reasons());
+	}
+
+	/**
+	 * Throw unless the reason is declared in config. Call this at any surface
+	 * where the reason is caller-supplied.
+	 *
+	 * The PHP-internal writers (grant/spend/transfer/refund) are deliberately
+	 * NOT gated on this: they are called with literals and constants from
+	 * plugin handlers, and tightening them would reject app-specific grants
+	 * that no request can reach. The gate belongs at the request boundary.
+	 *
+	 * @method requireValidReason
+	 * @static
+	 * @param {string} $reason
+	 * @throws {Q_Exception_RequiredField} if the reason is empty
+	 * @throws {Q_Exception_WrongValue} if the reason is not declared in config
+	 */
+	static function requireValidReason($reason)
+	{
+		if (!is_string($reason) or $reason === '') {
+			throw new Q_Exception_RequiredField(array('field' => 'reason'));
+		}
+		if (!self::isValidReason($reason)) {
+			throw new Q_Exception_WrongValue(array(
+				'field' => 'reason',
+				'range' => 'a reason declared in Assets/credits/reasons'
+					. ' or Assets/payments/reasons config',
+				'value' => $reason
+			));
+		}
+	}
+
+	/**
 	 * Convert reason to readable text.
 	 * @method reasonToText
 	 * @static
