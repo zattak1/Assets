@@ -520,7 +520,38 @@
 				"min": 1000, /* when users credits amount less or equal this, auto charge with "additional" credits or send alert */
 				"add": 20000 /* when users credits amount less or equal "min", auto charge with this credits amount */
 			},
-			"buyLink": "Communities/me tab=credits"
+			"buyLink": "Communities/me tab=credits",
+			/*
+				The credit-ledger reason vocabulary: the values that may end up
+				in assets_credits.reason. Assets_Credits::isValidReason() tests
+				for the KEY, so a reason is allowed to carry {} here -- unlike
+				"Assets"/"payments"/"reasons", whose consumer in
+				Assets/payment intent uses the value as a boolean.
+
+				Every entry below is a reason this plugin (or Calendars,
+				Communities, Media) actually writes. Apps add their own here,
+				or under "Assets"/"payments"/"reasons" when the reason is also
+				a gateway reason; Assets_Credits::reasons() unions both.
+
+				"by" is documentation only, and mirrors the shape the (unused)
+				top-level "Assets"/"reasons" key already had.
+			*/
+			"reasons": {
+				"BoughtCredits": { "by": "purchasing credits" },
+				"BonusCredits": { "by": "a bonus on a purchase" },
+				"YouHaveCreditsToStart": { "by": "the signup grant" },
+				"PaymentToUser": { "by": "transferring credits to a user" },
+				"JoinedPaidStream": { "by": "joining a paid stream" },
+				"LeftPaidStream": { "by": "leaving a paid stream (refund)" },
+				"CreatedCommunity": { "by": "creating a community" },
+				"CreatePrivateChat": { "by": "starting a private chat" },
+				"CreatePaidStream": { "by": "creating a paid stream" },
+				"InviteAcceptedBy": { "by": "an invite being accepted" },
+				"InvitedUserFilledStream": { "by": "an invited user filling a stream" },
+				"InvitedUserPaid": { "by": "an invited user paying (commission)" },
+				"ForFillingStream": { "by": "filling in a stream" },
+				"WatchClip": { "by": "watching a clip" }
+			}
 		},
 		"currencies": {
 			"ignoreCache": false,

@@ -16,7 +16,9 @@
  * @param {Array} [$_REQUEST.toStream] (publisherId + streamName/name) for stream payment
  * @param {String} [$_REQUEST.toUserId] Destination user
  * @param {Array} [$_REQUEST.items] Itemized list: each item has {publisherId, streamName, amount}.
- * @param {String} [$_REQUEST.reason] Reason for payment
+ * @param {String} $_REQUEST.reason Reason for payment. Must be declared in
+ *   "Assets"/"credits"/"reasons" or "Assets"/"payments"/"reasons" config --
+ *   see Assets_Credits::requireValidReason().
  * @param {String} [$params.userId] Override userId
  * @param {boolean} [$params.autoCharge=false] Auto-charge if needed
  */
@@ -36,6 +38,14 @@ function Assets_pay_post($params = array())
 	$amount   = floatval($req['amount']);
 	$reason   = Q::ifset($req, 'reason', null);
 	$force    = Q::ifset($params, "autoCharge", false);
+
+	// The request boundary is where the reason stops being trusted. Without
+	// this, any string at all mints a Users_Intent and lands verbatim in
+	// assets_credits.reason, which anything reporting on or reconciling
+	// against that column would then have to treat as free text.
+	// Assets/payment intent already gates its own reason this way; this is
+	// the same gate on the other entry point into the same flow.
+	Assets_Credits::requireValidReason($reason);
 
 	// Detect stream destination
 	$toPublisherId = Q::ifset($req, 'toStream', 'publisherId', null);

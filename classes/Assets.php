@@ -293,6 +293,16 @@ abstract class Assets extends Base_Assets
 			);
 		}
 
+		// Backstop for the check in the Assets/pay HTTP handler, so any future
+		// route into pay() inherits it. Returns structured rather than throwing,
+		// because this method's contract is that it never throws.
+		if (!Assets_Credits::isValidReason($reason)) {
+			return array(
+				"success" => false,
+				"details" => array("error" => "Undeclared reason: $reason")
+			);
+		}
+
 		//-------------------------------------------------------------
 		// 1. Convert original currency to credits
 		//-------------------------------------------------------------
