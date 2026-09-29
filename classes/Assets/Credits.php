@@ -386,7 +386,7 @@ class Assets_Credits extends Base_Assets_Credits
 			));
 
 		} catch (Exception $e) {
-			$from_stream->executeRollback();
+			self::rollbackKeepingError($from_stream);
 			throw $e;
 		}
 
@@ -581,7 +581,7 @@ class Assets_Credits extends Base_Assets_Credits
 
 		} catch (Exception $e) {
 
-			$fromStream->executeRollback();
+			self::rollbackKeepingError($fromStream);
 			throw $e;
 		}
 
@@ -799,8 +799,29 @@ class Assets_Credits extends Base_Assets_Credits
 				'caching' => false
 			));
 		} catch (Exception $e) {
-			$first->executeRollback();
+			self::rollbackKeepingError($first);
 			throw $e;
+		}
+	}
+
+	/**
+	 * Rolls back after a failure, for a catch block that rethrows the failure.
+	 * When a statement fails inside a transaction, Db_Query_Mysql::execute()
+	 * has usually rolled back already, so this ROLLBACK then throws "There is
+	 * no active transaction". That must not replace the caller's exception:
+	 * a lock wait timeout or deadlock would be logged as a missing
+	 * transaction. The secondary error is dropped; the original is rethrown
+	 * by the caller.
+	 * @method rollbackKeepingError
+	 * @static
+	 * @private
+	 * @param {Db_Row} $row Any row on the connection holding the transaction
+	 */
+	private static function rollbackKeepingError($row)
+	{
+		try {
+			$row->executeRollback();
+		} catch (Exception $ignored) {
 		}
 	}
 
