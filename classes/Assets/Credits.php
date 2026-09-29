@@ -327,13 +327,12 @@ class Assets_Credits extends Base_Assets_Credits
 		}
 
 		//--------------------------------------------------------------------
-		// 1. Begin TX by locking payer stream
+		// 1. Begin TX by locking both balance streams, fresh
+		//    (fetched or created first, outside the transaction)
 		//--------------------------------------------------------------------
 		$from_stream = self::stream($communityId, $fromUserId, $communityId);
-		$from_stream->retrieve('*', true, array(
-			'begin' => true, // ONLY BEGIN HERE
-			'rollbackIfMissing' => true
-		));
+		$to_stream = self::stream($communityId, $toUserId, $communityId, true);
+		self::lockBalances($from_stream, $to_stream);
 		$currentCredits = floatval($from_stream->getAttribute('amount'));
 
 		//--------------------------------------------------------------------
@@ -345,14 +344,6 @@ class Assets_Credits extends Base_Assets_Credits
 				'missing' => $amount - $currentCredits
 			));
 		}
-
-		//--------------------------------------------------------------------
-		// 3. Lock receiver stream (no second BEGIN)
-		//--------------------------------------------------------------------
-		$to_stream = self::stream($communityId, $toUserId, $communityId, true);
-		$to_stream->retrieve('*', true, array(
-			'rollbackIfMissing' => true   // no 'begin'
-		));
 
 		//--------------------------------------------------------------------
 		// 4. Create ledger row (no COMMIT)
@@ -490,17 +481,31 @@ class Assets_Credits extends Base_Assets_Credits
 		}
 
 		//--------------------------------------------------------------------
-		// 1. Begin TX: lock only payer balance stream
+		// 1. Identify publisher receiving the credits
 		//--------------------------------------------------------------------
-		$fromStream = Assets_Credits::stream($communityId, $fromUserId, $communityId);
-		$fromStream->retrieve('*', true, array(
-			'begin' => true,
-			'rollbackIfMissing' => true
-		));
-		$currentCredits = floatval($fromStream->getAttribute("amount"));
+		$toPublisherId = Q::ifset($options, "toPublisherId", Users::communityId());
+
+		// Paying yourself would save the payer's balance and then the
+		// receiver's, the same row, last: the amount would be created.
+		if ((string)$toPublisherId === (string)$fromUserId) {
+			throw new Q_Exception_WrongValue(array(
+				'field' => 'options.toPublisherId',
+				'range' => 'you can\'t pay yourself'
+			));
+		}
 
 		//--------------------------------------------------------------------
-		// 2. Auto-top-up if insufficient credits
+		// 2. Begin TX by locking both balance streams, fresh
+		//    (fetched or created first, outside the transaction)
+		//--------------------------------------------------------------------
+		$fromStream = Assets_Credits::stream($communityId, $fromUserId, $communityId);
+		$toStream = Assets_Credits::stream($communityId, $toPublisherId, $communityId, true);
+		self::lockBalances($fromStream, $toStream);
+		$currentCredits = floatval($fromStream->getAttribute("amount"));
+		$publisherCredits = floatval($toStream->getAttribute("amount"));
+
+		//--------------------------------------------------------------------
+		// 3. Insufficient credits
 		//--------------------------------------------------------------------
 		if ($currentCredits < $amountCredits) {
 			$fromStream->executeRollback();
@@ -508,20 +513,6 @@ class Assets_Credits extends Base_Assets_Credits
 				"missing" => $amountCredits - $currentCredits
 			));
 		}
-
-		//--------------------------------------------------------------------
-		// 3. Identify publisher receiving the credits
-		//--------------------------------------------------------------------
-		$toPublisherId = Q::ifset($options, "toPublisherId", Users::communityId());
-
-		//--------------------------------------------------------------------
-		// 4. Lock publisher stream (no begin)
-		//--------------------------------------------------------------------
-		$toStream = Assets_Credits::stream($communityId, $toPublisherId, $communityId, true);
-		$toStream->retrieve('*', true, array(
-			'rollbackIfMissing' => true
-		));
-		$publisherCredits = floatval($toStream->getAttribute("amount"));
 
 		//--------------------------------------------------------------------
 		// 5. Create ledger row (no commit)
@@ -758,6 +749,59 @@ class Assets_Credits extends Base_Assets_Credits
 		}
 
 		return $attributes;
+	}
+
+	/**
+	 * Begins the transaction of a movement of credits by locking BOTH
+	 * balance streams with SELECT ... FOR UPDATE, and reads both fresh.
+	 *
+	 * The rows are locked in one order (by publisherId and name) whatever
+	 * the direction of the payment, so a payment A->B in one process and
+	 * B->A in another cannot deadlock. The receiver's lock is what keeps
+	 * two concurrent payments to one receiver from losing one credit.
+	 *
+	 * Both reads bypass the per-request Db query cache (ignoreCache) and are
+	 * not stored in it (caching false). A plain retrieve() of the receiver
+	 * used to get the row cached by an earlier movement in the same process,
+	 * so the second credit to a receiver started from the old balance: the
+	 * first credit was lost, or credits the receiver had spent came back.
+	 *
+	 * The caller must commit the transaction with its last save(), or call
+	 * executeRollback() on either stream.
+	 * @method lockBalances
+	 * @static
+	 * @private
+	 * @param {Streams_Stream} $fromStream The payer's Assets/credits stream
+	 * @param {Streams_Stream} $toStream The receiver's Assets/credits stream
+	 * @throws {Q_Exception_MissingRow} after rolling back, if either row is gone
+	 */
+	private static function lockBalances($fromStream, $toStream)
+	{
+		$first = $fromStream;
+		$second = $toStream;
+		if (strcmp(
+			$fromStream->publisherId . "\t" . $fromStream->name,
+			$toStream->publisherId . "\t" . $toStream->name
+		) > 0) {
+			$first = $toStream;
+			$second = $fromStream;
+		}
+		// begin() adds FOR UPDATE and ignoreCache(); a missing row rolls back and throws
+		$first->retrieve(true, true, array(
+			'begin' => true,
+			'rollbackIfMissing' => true,
+			'caching' => false
+		));
+		try {
+			$second->retrieve(true, true, array(
+				'lock' => 'FOR UPDATE',
+				'ignoreCache' => true,
+				'caching' => false
+			));
+		} catch (Exception $e) {
+			$first->executeRollback();
+			throw $e;
+		}
 	}
 
 	/**
