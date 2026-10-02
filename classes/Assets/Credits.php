@@ -190,6 +190,8 @@ class Assets_Credits extends Base_Assets_Credits
 	 * @param {string} [$attributes.streamName] The name of the stream representing the purchase
 	 * @param {string} [$attributes.fromUserId=Users::communityId()] Consider passing Users::currentCommunityId() here.
 	 * @return {boolean} Whether the grant occurred
+	 * @throws {Exception} If the grant fails, after rolling back; inside a
+	 *   caller's transaction that rollback is the caller's too (see lockBalance)
 	 */
 	static function grant($communityId, $amount, $reason, $userId = null, $attributes = array())
 	{
@@ -209,13 +211,34 @@ class Assets_Credits extends Base_Assets_Credits
 
 		$userId = $userId ? $userId : Users::loggedInUser(true)->id;
 
-		$stream = self::stream($communityId, $userId, $communityId);
-		$stream->setAttribute('amount', $stream->getAttribute('amount') + $amount);
-		$stream->changed($communityId);
-
 		$fromUserId = Q::ifset($attributes, 'fromUserId', Users::communityId());
 
-		$assets_credits = self::createRow($communityId, $amount, $reason, $userId, $fromUserId, $attributes);
+		// Fetched or created first, outside the transaction: creating the
+		// stream runs its own starting grant() and posts a message, and none
+		// of that should happen while the balance row is locked.
+		$stream = self::stream($communityId, $userId, $communityId);
+
+		// Lock the balance row and read it fresh, then write the ledger row
+		// and the new balance in one transaction. Unlocked, a grant running
+		// beside a transfer()/spend() on the same balance lost one of the two
+		// updates (both read the old amount, the later save won), and a
+		// failure between the two writes left a balance with no ledger row.
+		self::lockBalance($stream);
+		try {
+			$assets_credits = self::createRow($communityId, $amount, $reason, $userId, $fromUserId, $attributes);
+			$stream->setAttribute('amount', $stream->getAttribute('amount') + $amount);
+			$changes = array('attributes' => $stream->attributes);
+			$stream->save(false, array('commit' => true));
+		} catch (Exception $e) {
+			self::rollbackKeepingError($stream);
+			throw $e;
+		}
+		// What $stream->changed() used to post, now after the commit
+		$stream->post($communityId, array(
+			'type' => 'Streams/changed',
+			'content' => '',
+			'instructions' => compact('changes')
+		), true);
 
 		// Post that this user granted $amount credits by $reason
 		$text = Q_Text::get('Assets/content');
@@ -764,12 +787,7 @@ class Assets_Credits extends Base_Assets_Credits
 			$first = $toStream;
 			$second = $fromStream;
 		}
-		// begin() adds FOR UPDATE and ignoreCache(); a missing row rolls back and throws
-		$first->retrieve(true, true, array(
-			'begin' => true,
-			'rollbackIfMissing' => true,
-			'caching' => false
-		));
+		self::lockBalance($first);
 		try {
 			$second->retrieve(true, true, array(
 				'lock' => 'FOR UPDATE',
@@ -780,6 +798,40 @@ class Assets_Credits extends Base_Assets_Credits
 			self::rollbackKeepingError($first);
 			throw $e;
 		}
+	}
+
+	/**
+	 * Begins the transaction of a change to ONE balance by locking its stream
+	 * with SELECT ... FOR UPDATE, read fresh past the per-request query cache
+	 * and not stored in it. lockBalances() takes its first lock this way.
+	 *
+	 * Taking a single balance lock cannot deadlock against lockBalances(),
+	 * which takes its two in a fixed order: a transaction holding one balance
+	 * lock waits for nothing else. That holds as long as no caller locks a
+	 * balance while it already holds another, so do not call grant() inside
+	 * a transfer() or spend() transaction.
+	 *
+	 * Nested inside a caller's transaction, begin() only counts and the lock
+	 * is held until the caller commits. A failure rolls back the CALLER's
+	 * transaction too (Db_Query_Mysql::execute() rolls back the connection),
+	 * so the catch that follows must rethrow, never continue.
+	 *
+	 * The caller must commit the transaction with its last save(), or call
+	 * executeRollback() (through rollbackKeepingError() in a catch).
+	 * @method lockBalance
+	 * @static
+	 * @private
+	 * @param {Streams_Stream} $stream An Assets/credits stream
+	 * @throws {Q_Exception_MissingRow} after rolling back, if the row is gone
+	 */
+	private static function lockBalance($stream)
+	{
+		// begin() adds FOR UPDATE and ignoreCache(); a missing row rolls back and throws
+		$stream->retrieve(true, true, array(
+			'begin' => true,
+			'rollbackIfMissing' => true,
+			'caching' => false
+		));
 	}
 
 	/**
