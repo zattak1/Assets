@@ -236,6 +236,8 @@ abstract class Assets extends Base_Assets
 	 * @param {string} [$options.toPublisherId] publisherId of the stream to pay for
 	 * @param {string} [$options.toStreamName] name of the stream to pay for
 	 * @param {string} [$options.autoCharge] set to true to attempt to automatically charge missing amount
+	 * @param {boolean} [$options.skipDiscounts=false] don't apply the stream's payment "discounts",
+	 *   e.g. for the second and later items of one booking paid item by item
 	 * @param {array|false} [$options.subscribe] Options to pass to subscribe() method
 	 *   on successful payment. Pass false here to skip subscribing.
 	 * @return array ("success" => bool, "details" => array)
@@ -341,13 +343,19 @@ abstract class Assets extends Base_Assets
 					}
 				}
 
-				$discountCredits = Assets_Credits::maxAmountFromPaymentAttribute(
-					$stream,
-					'discounts',
-					$needCredits,
-					$currency,
-					$referrerUserId
-				);
+				// skipDiscounts: one booking paid as several items (an
+				// event place, then related streams) gets its discount on
+				// one item only -- a fixed "credits"/"amount" discount
+				// would otherwise be granted once per item (ro#1065 R4)
+				$discountCredits = empty($options['skipDiscounts'])
+					? Assets_Credits::maxAmountFromPaymentAttribute(
+						$stream,
+						'discounts',
+						$needCredits,
+						$currency,
+						$referrerUserId
+					)
+					: 0;
 
 				if ($discountCredits > 0) {
 					$needCredits = max(0, $needCredits - $discountCredits);
