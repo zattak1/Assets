@@ -629,7 +629,16 @@ class Assets_Payments_Stripe extends Assets_Payments implements Assets_Payments_
 		}
 
 		// Optional replay / idempotency hooks can live here later
-		// Signature verification already happened in parseWebhook()
+
+		// Nothing on the Assets_Dispatcher path checks a Stripe signature.
+		// Its only entry point, Assets_Controller, called a parseWebhook()
+		// that this class never had, and was removed (ro#1070 R03). Stripe
+		// events are verified by \Stripe\Webhook::constructEvent() in
+		// Assets/stripeWebhook; whoever dispatches one here must have done
+		// the same and say so, or it would credit an unsigned POST.
+		if (empty($context['signatureVerified'])) {
+			throw new Exception("Stripe webhook event dispatched without a verified signature");
+		}
 	}
 
 	/**
