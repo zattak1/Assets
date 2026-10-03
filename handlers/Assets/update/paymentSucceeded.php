@@ -33,40 +33,10 @@ function Assets_update_paymentSucceeded($data, $envelope)
 			'token' => $metadata['intentToken']
 		));
 
-		// The intent spends its own userId's credits: only that user's
-		// payment may continue it (ro#1067).
-		if ($intent->retrieve() && $intent->isValid()
-		&& $intent->getInstruction('userId', null) === $data['userId']) {
-
-			$instructions = $intent->getAllInstructions();
-
-			$options = Q::take($instructions, array(
-				'currency', 'payments',
-				'toPublisherId', 'toStreamName',
-				'toUserId', 'metadata'
-			));
-			$options['autoCharge'] = false;
-
-			$needCredits = $intent->getInstruction('needCredits', 0);
-			if ($needCredits) {
-				$options['currency'] = 'credits';
-			}
-
-			$spentCredits = 0;
-			if ($needCredits) {
-				$spentCredits = Assets_Credits::spend(
-					$instructions['communityId'],
-					$needCredits,
-					$instructions['reason'],
-					$instructions['userId'],
-					$options
-				);
-			}
-
-			$intent->complete(array(
-				'success'      => (!$needCredits || $spentCredits > 0),
-				'spentCredits' => $spentCredits
-			));
+		// Only the intent's own user's payment may continue it (ro#1067),
+		// and only once (ro#1070): Assets::continueIntent() checks both.
+		if ($intent->retrieve()) {
+			Assets::continueIntent($intent, $data['userId'], $data['payments']);
 		}
 	}
 }

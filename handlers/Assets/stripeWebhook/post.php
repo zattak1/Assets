@@ -51,75 +51,23 @@ function Assets_handleStripeSuccessfulCharge($amount, $currency, $metadata, $eve
 			&& (!isset($metadata['autoCharge']) || $metadata['autoCharge'] !== "1")
 		);
 
-        if ($shouldContinue) {
+		if ($shouldContinue) {
+			// Assets::continueIntent() checks that the intent is this user's
+			// (ro#1067; resolveMetadata() already tied the Stripe customer to
+			// $metadata['userId']) and continues it at most once, so a
+			// redelivered event does not spend the credits again (ro#1070).
 			$intent = new Users_Intent(array('token' => $metadata['intentToken']));
-			$intentFound = $intent->retrieve() && $intent->isValid();
-			// The intent spends its own userId's credits: only that user's
-			// payment may continue it (ro#1067). resolveMetadata() already
-			// tied the Stripe customer to $metadata['userId'].
-			if ($intentFound
-			&& $intent->getInstruction('userId', null) !== Q::ifset($metadata, 'userId', null)) {
-				Assets_Payments_Stripe::log('stripe', 'Refusing to continue intent: it belongs to userId '
-					. var_export($intent->getInstruction('userId', null), true)
-					. ' but the payment is from userId ' . var_export(Q::ifset($metadata, 'userId', null), true));
-				$intentFound = false;
-			}
-			if ($intentFound) {
-
-				$instructions = $intent->getAllInstructions();
-
-				// get amount of credits to transfer
-				// fromPublisherId/fromStreamName: the stream paid for on the
-				// payer's behalf (a pet at an event). Assets::pay() puts them
-				// in the intent; dropping them here recorded the payment as
-				// the payer's own, so getPaymentsInfo() for that stream never
-				// saw it and it was charged again (ro#1039).
-				$options = Q::take($instructions, array(
-					'currency', 'payments',
-					'toPublisherId', 'toStreamName', 'toUserId', 'metadata',
-					'fromPublisherId', 'fromStreamName'
-				));
-				$options['autoCharge'] = false;
-				if ($needCredits = $intent->getInstruction('needCredits', 0)) {
-					$options['currency'] = 'credits';
-				}
-
-				$spentCredits = 0;
-				if ($needCredits) {
-					// Mirror Assets::pay: spend() requires a stream target;
-					// user-target payments (e.g. donations) must transfer().
-					if (!empty($options['toPublisherId']) and !empty($options['toStreamName'])) {
-						$spentCredits = Assets_Credits::spend(
-							$instructions['communityId'],
-							$needCredits,
-							$instructions['reason'],
-							$instructions['userId'],
-							$options
-						);
-					} else if (!empty($instructions['toUserId'])) {
-						$spentCredits = Assets_Credits::transfer(
-							$instructions['communityId'],
-							$needCredits,
-							$instructions['reason'],
-							$instructions['toUserId'],
-							$instructions['userId'],
-							$options
-						);
-					}
-				}
-				$success = (!$needCredits or $spentCredits > 0);
-
-				// complete the intent, then take actions
-				$intent->complete(array(
-					'success' => $success,
-					'spentCredits' => $spentCredits
-				));
-
-				Assets_Payments_Stripe::log(
-					"stripe",
-					"Intent payment completed (webhook)",
-					array("instructions" => $instructions, "success" => $success)
+			if ($intent->retrieve()) {
+				$results = Assets::continueIntent(
+					$intent, Q::ifset($metadata, 'userId', null), 'stripe'
 				);
+				if ($results) {
+					Assets_Payments_Stripe::log(
+						"stripe",
+						"Intent payment completed (webhook)",
+						array("instructions" => $intent->getAllInstructions(), "success" => $results['success'])
+					);
+				}
 			}
 		}
 
@@ -264,6 +212,16 @@ function Assets_stripeWebhook_post($params = array())
 
 				if (!$pm || !$customerId) {
 					Assets_Payments_Stripe::log("setup_intent missing fields");
+					return;
+				}
+
+				// metadata.userId is whatever the setup intent's creator
+				// wrote: act only if the customer is that user's own, as
+				// resolveMetadata() requires of payments (ro#1067, ro#1070).
+				if (!Assets_Customer::belongsTo($customerId, $userId)) {
+					Assets_Payments_Stripe::log('stripe', 'Refusing setup_intent.succeeded: customer '
+						. var_export($customerId, true) . ' does not belong to userId '
+						. var_export($userId, true));
 					return;
 				}
 

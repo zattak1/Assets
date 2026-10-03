@@ -753,6 +753,111 @@ abstract class Assets extends Base_Assets
 	}
 
 	/**
+	 * Carry out the rest of a pending Assets::pay() once the payment that
+	 * funded it has been recorded by charged(): move the intent's credits,
+	 * then complete the intent. The one implementation behind the Stripe
+	 * webhook (stripeWebhook/post.php) and Assets/update/paymentSucceeded,
+	 * which had drifted apart (ro#1039 fixed only the first).
+	 *
+	 * Runs at most once per intent (ro#1070 R04). charged() is idempotent on
+	 * the charge id, but this continuation was not: isValid() checks only the
+	 * time window, so a redelivered event spent the credits again and
+	 * completed the intent again. The intent is claimed with
+	 * Users_Intent::claimCompletion() before anything moves - a
+	 * compare-and-set, so two deliveries in flight cannot both win - and the
+	 * claim is given back if moving the credits throws, so a later delivery
+	 * can still finish the job.
+	 *
+	 * @method continueIntent
+	 * @static
+	 * @param {Users_Intent} $intent The intent named by the payment's
+	 *  metadata.intentToken, retrieved
+	 * @param {string} $userId The user who paid, as the payments adapter
+	 *  resolved it (for Stripe, bound to the paying customer, ro#1067)
+	 * @param {string} [$payments='stripe'] Only for the log
+	 * @return {array|false} array('success' => boolean, 'spentCredits' => number)
+	 *  if this call continued the intent; false if it did not (expired, not
+	 *  this user's, already completed or claimed)
+	 * @throws {Exception} whatever moving the credits threw, after the claim
+	 *  was released
+	 */
+	static function continueIntent($intent, $userId, $payments = 'stripe')
+	{
+		if (!$intent || !$intent->isValid()) {
+			return false;
+		}
+		// The intent spends its own userId's credits: only that user's
+		// payment may continue it (ro#1067).
+		$intentUserId = $intent->getInstruction('userId', null);
+		if ($intentUserId === null || $intentUserId !== $userId) {
+			Q::log("Assets::continueIntent: refusing intent of userId "
+				. var_export($intentUserId, true) . " for a $payments payment by userId "
+				. var_export($userId, true), 'assets');
+			return false;
+		}
+		if (!$intent->claimCompletion()) {
+			Q::log("Assets::continueIntent: intent already completed, not continued again"
+				. " ($payments payment by userId $userId)", 'assets');
+			return false;
+		}
+
+		$instructions = $intent->getAllInstructions();
+
+		// fromPublisherId/fromStreamName: the stream paid for on the payer's
+		// behalf (a pet at an event). Assets::pay() puts them in the intent;
+		// dropping them recorded the payment as the payer's own, so
+		// getPaymentsInfo() for that stream never saw it and it was charged
+		// again (ro#1039).
+		$options = Q::take($instructions, array(
+			'currency', 'payments',
+			'toPublisherId', 'toStreamName', 'toUserId', 'metadata',
+			'fromPublisherId', 'fromStreamName'
+		));
+		$options['autoCharge'] = false;
+		$needCredits = $intent->getInstruction('needCredits', 0);
+		if ($needCredits) {
+			$options['currency'] = 'credits';
+		}
+
+		$spentCredits = 0;
+		try {
+			if ($needCredits) {
+				// Mirror Assets::pay: spend() requires a stream target;
+				// user-target payments (e.g. donations) must transfer().
+				if (!empty($options['toPublisherId']) and !empty($options['toStreamName'])) {
+					$spentCredits = Assets_Credits::spend(
+						$instructions['communityId'],
+						$needCredits,
+						$instructions['reason'],
+						$instructions['userId'],
+						$options
+					);
+				} else if (!empty($instructions['toUserId'])) {
+					$spentCredits = Assets_Credits::transfer(
+						$instructions['communityId'],
+						$needCredits,
+						$instructions['reason'],
+						$instructions['toUserId'],
+						$instructions['userId'],
+						$options
+					);
+				}
+			}
+		} catch (Exception $e) {
+			$intent->releaseCompletion();
+			throw $e;
+		}
+		$success = (!$needCredits or $spentCredits > 0);
+
+		$results = array(
+			'success' => $success,
+			'spentCredits' => $spentCredits
+		);
+		$intent->complete($results);
+		return $results;
+	}
+
+	/**
 	 * Honor successful external charges that were already finalized
 	 * at the payment provider but not yet recorded locally.
 	 *
