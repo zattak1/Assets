@@ -1,6 +1,14 @@
 <?php
 
 function Assets_after_Streams_save($params) {
+	// A credits balance is saved inside grant(), transfer() and spend(),
+	// with its balance row locked. Nothing below applies to a balance, and
+	// a grant() from here would take a second balance lock (ro#1043), so
+	// a forStreams config entry naming Assets/credits must not reach it.
+	$stream = Q::ifset($params, 'row', Q::ifset($params, 'stream', null));
+	if ($stream && $stream->type === 'Assets/credits') {
+		return;
+	}
 	Assets_NFT_update_attributes_relations($params);
 	Assets_grant_credits_for_filling_personal_streams($params);
 	Assets_grant_credits_for_invited_users($params);

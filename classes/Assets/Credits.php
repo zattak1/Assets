@@ -9,6 +9,17 @@
  */
 class Assets_Credits extends Base_Assets_Credits
 {
+	/**
+	 * How many balance-lock windows (grant(), transfer(), spend()) this
+	 * process is inside, from taking the lock to the commit or rollback.
+	 * grant() refuses to start while it is non-zero (ro#1043).
+	 * @property $balanceLocksHeld
+	 * @type integer
+	 * @static
+	 * @private
+	 */
+	private static $balanceLocksHeld = 0;
+
 	const DEFAULT_AMOUNT = 0;
 
 	/**
@@ -209,6 +220,18 @@ class Assets_Credits extends Base_Assets_Credits
 			throw new Q_Exception_RequiredField(array('field' => 'reason'));
 		}
 
+		// A grant takes a balance lock. Taking it while this process holds
+		// another (inside grant(), transfer() or spend(), e.g. from a
+		// Streams/save or Assets/credits/spend hook) breaks the ordering
+		// lockBalances() relies on and can deadlock, so refuse (ro#1043).
+		// Thrown inside the caller's try, this rolls the caller back.
+		if (self::$balanceLocksHeld > 0) {
+			throw new Q_Exception(
+				"Assets_Credits::grant() cannot run while a balance lock is held"
+				. " (inside grant(), transfer() or spend()); grant after the commit instead"
+			);
+		}
+
 		$userId = $userId ? $userId : Users::loggedInUser(true)->id;
 
 		$fromUserId = Q::ifset($attributes, 'fromUserId', Users::communityId());
@@ -223,15 +246,20 @@ class Assets_Credits extends Base_Assets_Credits
 		// beside a transfer()/spend() on the same balance lost one of the two
 		// updates (both read the old amount, the later save won), and a
 		// failure between the two writes left a balance with no ledger row.
-		self::lockBalance($stream);
+		self::$balanceLocksHeld++;
 		try {
-			$assets_credits = self::createRow($communityId, $amount, $reason, $userId, $fromUserId, $attributes);
-			$stream->setAttribute('amount', $stream->getAttribute('amount') + $amount);
-			$changes = array('attributes' => $stream->attributes);
-			$stream->save(false, array('commit' => true));
-		} catch (Exception $e) {
-			self::rollbackKeepingError($stream);
-			throw $e;
+			self::lockBalance($stream);
+			try {
+				$assets_credits = self::createRow($communityId, $amount, $reason, $userId, $fromUserId, $attributes);
+				$stream->setAttribute('amount', $stream->getAttribute('amount') + $amount);
+				$changes = array('attributes' => $stream->attributes);
+				$stream->save(false, array('commit' => true));
+			} catch (Exception $e) {
+				self::rollbackKeepingError($stream);
+				throw $e;
+			}
+		} finally {
+			self::$balanceLocksHeld--;
 		}
 		// What $stream->changed() used to post, now after the commit
 		$stream->post($communityId, array(
@@ -330,62 +358,67 @@ class Assets_Credits extends Base_Assets_Credits
 		//--------------------------------------------------------------------
 		$from_stream = self::stream($communityId, $fromUserId, $communityId);
 		$to_stream = self::stream($communityId, $toUserId, $communityId, true);
-		self::lockBalances($from_stream, $to_stream);
-		$currentCredits = floatval($from_stream->getAttribute('amount'));
-
-		//--------------------------------------------------------------------
-		// 2. Insufficient credits to auto top up
-		//--------------------------------------------------------------------
-		if ($currentCredits < $amount) {
-			$from_stream->executeRollback();
-			throw new Assets_Exception_NotEnoughCredits(array(
-				'missing' => $amount - $currentCredits
-			));
-		}
-
-		//--------------------------------------------------------------------
-		// 4. Create ledger row (no COMMIT)
-		//--------------------------------------------------------------------
-		$attributes["amount"]          = $amount;
-		$attributes["toUserId"]        = $toUserId;
-		$attributes["fromStreamTitle"] = null;
-		$attributes["toStreamTitle"]   = null;
-
+		self::$balanceLocksHeld++;
 		try {
+			self::lockBalances($from_stream, $to_stream);
+			$currentCredits = floatval($from_stream->getAttribute('amount'));
 
-			$assets_credits = self::createRow(
-				$communityId,
-				$amount,
-				$reason,
-				$toUserId,
-				$fromUserId,
-				$attributes
-			);
+			//--------------------------------------------------------------------
+			// 2. Insufficient credits to auto top up
+			//--------------------------------------------------------------------
+			if ($currentCredits < $amount) {
+				$from_stream->executeRollback();
+				throw new Assets_Exception_NotEnoughCredits(array(
+					'missing' => $amount - $currentCredits
+				));
+			}
 
-			//----------------------------------------------------------------
-			// 5. Deduct payer (no commit)
-			//----------------------------------------------------------------
-			$from_stream->setAttribute('amount', $currentCredits - $amount);
-			$from_stream->save(false, false);
+			//--------------------------------------------------------------------
+			// 4. Create ledger row (no COMMIT)
+			//--------------------------------------------------------------------
+			$attributes["amount"]          = $amount;
+			$attributes["toUserId"]        = $toUserId;
+			$attributes["fromStreamTitle"] = null;
+			$attributes["toStreamTitle"]   = null;
 
-			//----------------------------------------------------------------
-			// 6. Increase receiver (SAVE LAST)
-			//    This save() will produce the final Db_Query, and THAT query
-			//    should carry ->commit(), resolving the TX started earlier.
-			//----------------------------------------------------------------
-			$to_stream->setAttribute(
-				'amount',
-				$to_stream->getAttribute('amount') + $amount
-			);
+			try {
 
-			// attach commit to the receiver's save()
-			$to_stream->save(false, array(
-				'commit' => true  // this will attach COMMIT to this query
-			));
+				$assets_credits = self::createRow(
+					$communityId,
+					$amount,
+					$reason,
+					$toUserId,
+					$fromUserId,
+					$attributes
+				);
 
-		} catch (Exception $e) {
-			self::rollbackKeepingError($from_stream);
-			throw $e;
+				//----------------------------------------------------------------
+				// 5. Deduct payer (no commit)
+				//----------------------------------------------------------------
+				$from_stream->setAttribute('amount', $currentCredits - $amount);
+				$from_stream->save(false, false);
+
+				//----------------------------------------------------------------
+				// 6. Increase receiver (SAVE LAST)
+				//    This save() will produce the final Db_Query, and THAT query
+				//    should carry ->commit(), resolving the TX started earlier.
+				//----------------------------------------------------------------
+				$to_stream->setAttribute(
+					'amount',
+					$to_stream->getAttribute('amount') + $amount
+				);
+
+				// attach commit to the receiver's save()
+				$to_stream->save(false, array(
+					'commit' => true  // this will attach COMMIT to this query
+				));
+
+			} catch (Exception $e) {
+				self::rollbackKeepingError($from_stream);
+				throw $e;
+			}
+		} finally {
+			self::$balanceLocksHeld--;
 		}
 
 		//--------------------------------------------------------------------
@@ -504,89 +537,94 @@ class Assets_Credits extends Base_Assets_Credits
 		//--------------------------------------------------------------------
 		$fromStream = Assets_Credits::stream($communityId, $fromUserId, $communityId);
 		$toStream = Assets_Credits::stream($communityId, $toPublisherId, $communityId, true);
-		self::lockBalances($fromStream, $toStream);
-		$currentCredits = floatval($fromStream->getAttribute("amount"));
-		$publisherCredits = floatval($toStream->getAttribute("amount"));
-
-		//--------------------------------------------------------------------
-		// 3. Insufficient credits
-		//--------------------------------------------------------------------
-		if ($currentCredits < $amountCredits) {
-			$fromStream->executeRollback();
-			throw new Assets_Exception_NotEnoughCredits(array(
-				"missing" => $amountCredits - $currentCredits
-			));
-		}
-
-		//--------------------------------------------------------------------
-		// 5. Create ledger row (no commit)
-		//--------------------------------------------------------------------
-		$attributes = $options;
-		$attributes["amount"]          = $amountCredits;
-		$attributes["fromStreamTitle"] = null;
-		$attributes["toStreamTitle"]   = null;
-
-		foreach ($attributes as $k => $v) {
-			if (is_object($v) or is_array($v)) {
-				unset($attributes[$k]);
-			}
-		}
-
+		self::$balanceLocksHeld++;
 		try {
+			self::lockBalances($fromStream, $toStream);
+			$currentCredits = floatval($fromStream->getAttribute("amount"));
+			$publisherCredits = floatval($toStream->getAttribute("amount"));
 
-			$assets_credits = self::createRow(
-				$communityId,
-				$amountCredits,
-				$reason,
-				null,          // spend() has no toUserId
-				$fromUserId,
-				$attributes
-			);
-
-			//----------------------------------------------------------------
-			// 6. Deduct payer (no commit)
-			//----------------------------------------------------------------
-			$fromStream->setAttribute("amount", $currentCredits - $amountCredits);
-			$fromStream->save(false, false);
-
-			//----------------------------------------------------------------
-			// 7. Credit publisher (SAVE LAST to COMMIT HERE)
-			//----------------------------------------------------------------
-			$toStream->setAttribute("amount", $publisherCredits + $amountCredits);
-
-			/**
-			 * Hook after payment of credits.
-			 * @event Assets/credits/spend {after}
-			 * @param {string} communityId
-			 * @param {float} amountCredits
-			 * @param {string} reason
-			 * @param {string} fromUserId
-			 * @param {array} options
-			 * @param {float} currentCredits
-			 * @param {float} publisherCredits
-			 * @param {float} amountCredits
-			 */
-			if (false === Q::event(
-				'Assets/credits/spend',
-				@compact(
-					'communityId', 'amountCredits', 'reason', 'fromUserId', 'options',
-					 'currentCredits', 'publisherCredits'
-				),
-				'after'
-			)) {
+			//--------------------------------------------------------------------
+			// 3. Insufficient credits
+			//--------------------------------------------------------------------
+			if ($currentCredits < $amountCredits) {
 				$fromStream->executeRollback();
-				return false;
+				throw new Assets_Exception_NotEnoughCredits(array(
+					"missing" => $amountCredits - $currentCredits
+				));
 			}
 
-			// COMMIT attached here (publisher)
-			$toStream->save(false, array(
-				'commit' => true
-			));
+			//--------------------------------------------------------------------
+			// 5. Create ledger row (no commit)
+			//--------------------------------------------------------------------
+			$attributes = $options;
+			$attributes["amount"]          = $amountCredits;
+			$attributes["fromStreamTitle"] = null;
+			$attributes["toStreamTitle"]   = null;
 
-		} catch (Exception $e) {
+			foreach ($attributes as $k => $v) {
+				if (is_object($v) or is_array($v)) {
+					unset($attributes[$k]);
+				}
+			}
 
-			self::rollbackKeepingError($fromStream);
-			throw $e;
+			try {
+
+				$assets_credits = self::createRow(
+					$communityId,
+					$amountCredits,
+					$reason,
+					null,          // spend() has no toUserId
+					$fromUserId,
+					$attributes
+				);
+
+				//----------------------------------------------------------------
+				// 6. Deduct payer (no commit)
+				//----------------------------------------------------------------
+				$fromStream->setAttribute("amount", $currentCredits - $amountCredits);
+				$fromStream->save(false, false);
+
+				//----------------------------------------------------------------
+				// 7. Credit publisher (SAVE LAST to COMMIT HERE)
+				//----------------------------------------------------------------
+				$toStream->setAttribute("amount", $publisherCredits + $amountCredits);
+
+				/**
+				 * Hook after payment of credits.
+				 * @event Assets/credits/spend {after}
+				 * @param {string} communityId
+				 * @param {float} amountCredits
+				 * @param {string} reason
+				 * @param {string} fromUserId
+				 * @param {array} options
+				 * @param {float} currentCredits
+				 * @param {float} publisherCredits
+				 * @param {float} amountCredits
+				 */
+				if (false === Q::event(
+					'Assets/credits/spend',
+					@compact(
+						'communityId', 'amountCredits', 'reason', 'fromUserId', 'options',
+						 'currentCredits', 'publisherCredits'
+					),
+					'after'
+				)) {
+					$fromStream->executeRollback();
+					return false;
+				}
+
+				// COMMIT attached here (publisher)
+				$toStream->save(false, array(
+					'commit' => true
+				));
+
+			} catch (Exception $e) {
+
+				self::rollbackKeepingError($fromStream);
+				throw $e;
+			}
+		} finally {
+			self::$balanceLocksHeld--;
 		}
 
 
@@ -808,8 +846,9 @@ class Assets_Credits extends Base_Assets_Credits
 	 * Taking a single balance lock cannot deadlock against lockBalances(),
 	 * which takes its two in a fixed order: a transaction holding one balance
 	 * lock waits for nothing else. That holds as long as no caller locks a
-	 * balance while it already holds another, so do not call grant() inside
-	 * a transfer() or spend() transaction.
+	 * balance while it already holds another: grant() refuses to run while
+	 * $balanceLocksHeld says grant(), transfer() or spend() holds one
+	 * (ro#1043).
 	 *
 	 * Nested inside a caller's transaction, begin() only counts and the lock
 	 * is held until the caller commits. A failure rolls back the CALLER's
