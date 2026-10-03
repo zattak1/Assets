@@ -642,7 +642,17 @@ class Assets_Credits extends Base_Assets_Credits
 		Q::take($options, array(
 			'payments', 'currency', 'toUserId', 'toPublisherId', 'toStreamName'
 		), $extras);
-		Users_Referred::handleReferral($fromUserId, $toPublisherId, $referredAction, $toStream->type, compact('extras'));
+		// The spend is committed: a failure from here on must not make it
+		// look refused. handleReferral() retrieves its row through the
+		// per-request query cache, so a second spend to the same publisher
+		// in one request (Calendars_Event::going() paying item by item)
+		// re-inserted it and hit a duplicate key, and Assets::pay() reported
+		// a committed payment as failed (ro#1065).
+		try {
+			Users_Referred::handleReferral($fromUserId, $toPublisherId, $referredAction, $toStream->type, compact('extras'));
+		} catch (Exception $e) {
+			Q::log("Assets_Credits::spend: referral not recorded after a committed spend: " . $e->getMessage());
+		}
 
 
 		//--------------------------------------------------------------------
