@@ -58,9 +58,15 @@ function Assets_handleStripeSuccessfulCharge($amount, $currency, $metadata, $eve
 				$instructions = $intent->getAllInstructions();
 
 				// get amount of credits to transfer
+				// fromPublisherId/fromStreamName: the stream paid for on the
+				// payer's behalf (a pet at an event). Assets::pay() puts them
+				// in the intent; dropping them here recorded the payment as
+				// the payer's own, so getPaymentsInfo() for that stream never
+				// saw it and it was charged again (ro#1039).
 				$options = Q::take($instructions, array(
 					'currency', 'payments',
-					'toPublisherId', 'toStreamName', 'toUserId', 'metadata'
+					'toPublisherId', 'toStreamName', 'toUserId', 'metadata',
+					'fromPublisherId', 'fromStreamName'
 				));
 				$options['autoCharge'] = false;
 				if ($needCredits = $intent->getInstruction('needCredits', 0)) {

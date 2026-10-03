@@ -225,12 +225,7 @@ class Assets_Credits extends Base_Assets_Credits
 		// Streams/save or Assets/credits/spend hook) breaks the ordering
 		// lockBalances() relies on and can deadlock, so refuse (ro#1043).
 		// Thrown inside the caller's try, this rolls the caller back.
-		if (self::$balanceLocksHeld > 0) {
-			throw new Q_Exception(
-				"Assets_Credits::grant() cannot run while a balance lock is held"
-				. " (inside grant(), transfer() or spend()); grant after the commit instead"
-			);
-		}
+		self::refuseIfBalanceLockHeld('grant');
 
 		$userId = $userId ? $userId : Users::loggedInUser(true)->id;
 
@@ -319,6 +314,10 @@ class Assets_Credits extends Base_Assets_Credits
 	 */
 	static function transfer($communityId, $amount, $reason, $toUserId, $fromUserId = null, $attributes = array())
 	{
+		// Two more balance locks while this process holds one breaks the
+		// ordering lockBalances() relies on; see grant() (ro#1043, ro#1039).
+		self::refuseIfBalanceLockHeld('transfer');
+
 		if (!$communityId) {
 			$communityId = Users::communityId();
 		}
@@ -478,6 +477,12 @@ class Assets_Credits extends Base_Assets_Credits
 	 */
 	static function spend($communityId, $amountCredits, $reason, $fromUserId, $options = array())
 	{
+		// Reachable nested: an Assets/credits/spend after hook
+		// (Calendars_after_Assets_credits_spend) -> Calendars_Event::going()
+		// -> Streams::relate() -> the Calendars relateTo hook -> spend().
+		// Refused like a nested grant() (ro#1039).
+		self::refuseIfBalanceLockHeld('spend');
+
 		// Normalize community
 		if (!$communityId) {
 			$communityId = Users::communityId();
@@ -846,9 +851,9 @@ class Assets_Credits extends Base_Assets_Credits
 	 * Taking a single balance lock cannot deadlock against lockBalances(),
 	 * which takes its two in a fixed order: a transaction holding one balance
 	 * lock waits for nothing else. That holds as long as no caller locks a
-	 * balance while it already holds another: grant() refuses to run while
-	 * $balanceLocksHeld says grant(), transfer() or spend() holds one
-	 * (ro#1043).
+	 * balance while it already holds another: grant(), transfer() and spend()
+	 * each refuse to run while $balanceLocksHeld says one of them holds one
+	 * (refuseIfBalanceLockHeld(); ro#1043, ro#1039).
 	 *
 	 * Nested inside a caller's transaction, begin() only counts and the lock
 	 * is held until the caller commits. A failure rolls back the CALLER's
@@ -871,6 +876,29 @@ class Assets_Credits extends Base_Assets_Credits
 			'rollbackIfMissing' => true,
 			'caching' => false
 		));
+	}
+
+	/**
+	 * Refuses a balance movement while this process already holds a balance
+	 * lock, i.e. from inside grant(), transfer() or spend() -- a hook they
+	 * fire, or code their hooks call. Taking more balance locks there breaks
+	 * the fixed order lockBalances() relies on and can deadlock (ro#1043;
+	 * transfer() and spend() since ro#1039). Thrown inside the outer
+	 * movement's try, it rolls that movement back.
+	 * @method refuseIfBalanceLockHeld
+	 * @static
+	 * @private
+	 * @param {string} $method The method refusing, for the message
+	 * @throws {Q_Exception}
+	 */
+	private static function refuseIfBalanceLockHeld($method)
+	{
+		if (self::$balanceLocksHeld > 0) {
+			throw new Q_Exception(
+				"Assets_Credits::$method() cannot run while a balance lock is held"
+				. " (inside grant(), transfer() or spend()); move credits after the commit instead"
+			);
+		}
 	}
 
 	/**
