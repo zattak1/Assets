@@ -643,11 +643,11 @@ class Assets_Credits extends Base_Assets_Credits
 			'payments', 'currency', 'toUserId', 'toPublisherId', 'toStreamName'
 		), $extras);
 		// The spend is committed: a failure from here on must not make it
-		// look refused. handleReferral() retrieves its row through the
-		// per-request query cache, so a second spend to the same publisher
-		// in one request (Calendars_Event::going() paying item by item)
-		// re-inserted it and hit a duplicate key, and Assets::pay() reported
-		// a committed payment as failed (ro#1065).
+		// look refused. handleReferral() used to miss its existing row (it
+		// matched on the new extras) and re-insert it, a duplicate key, so
+		// Assets::pay() reported a committed payment as failed (ro#1065;
+		// fixed in Users_Referred by ro#1068, the catch stays for any other
+		// post-commit failure).
 		try {
 			Users_Referred::handleReferral($fromUserId, $toPublisherId, $referredAction, $toStream->type, compact('extras'));
 		} catch (Exception $e) {

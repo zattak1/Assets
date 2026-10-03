@@ -53,7 +53,18 @@ function Assets_handleStripeSuccessfulCharge($amount, $currency, $metadata, $eve
 
         if ($shouldContinue) {
 			$intent = new Users_Intent(array('token' => $metadata['intentToken']));
-			if ($intent->retrieve() && $intent->isValid()) {
+			$intentFound = $intent->retrieve() && $intent->isValid();
+			// The intent spends its own userId's credits: only that user's
+			// payment may continue it (ro#1067). resolveMetadata() already
+			// tied the Stripe customer to $metadata['userId'].
+			if ($intentFound
+			&& $intent->getInstruction('userId', null) !== Q::ifset($metadata, 'userId', null)) {
+				Assets_Payments_Stripe::log('stripe', 'Refusing to continue intent: it belongs to userId '
+					. var_export($intent->getInstruction('userId', null), true)
+					. ' but the payment is from userId ' . var_export(Q::ifset($metadata, 'userId', null), true));
+				$intentFound = false;
+			}
+			if ($intentFound) {
 
 				$instructions = $intent->getAllInstructions();
 

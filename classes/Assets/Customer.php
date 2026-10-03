@@ -38,6 +38,33 @@ class Assets_Customer extends Base_Assets_Customer
 	}
 
 	/**
+	 * Whether a payment processor's customer id is one of this user's
+	 * customers, i.e. there is an assets_customer row binding them.
+	 * A webhook credits the userId in the payment's metadata; this checks
+	 * that whoever paid (the processor's customer) is that user (ro#1067).
+	 * Rows under every keys hash count, so rotating the processor keys does
+	 * not orphan a payment made just before the rotation.
+	 * @method belongsTo
+	 * @static
+	 * @param {string} $customerId The processor's customer id, e.g. "cus_..."
+	 * @param {string} $userId
+	 * @param {string} [$payments="stripe"]
+	 * @return {boolean}
+	 */
+	static function belongsTo($customerId, $userId, $payments = 'stripe')
+	{
+		if (!is_string($customerId) || $customerId === ''
+		|| !is_string($userId) || $userId === '') {
+			return false;
+		}
+		return (bool) Assets_Customer::select('COUNT(1)')->where(array(
+			'userId' => $userId,
+			'payments' => $payments,
+			'customerId' => $customerId
+		))->ignoreCache()->caching(false)->fetchAll(PDO::FETCH_COLUMN)[0];
+	}
+
+	/**
 	 * Does necessary preparations for saving a stream in the database.
 	 * @method beforeSave
 	 * @param {array} $modifiedFields

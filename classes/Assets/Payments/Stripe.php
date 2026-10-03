@@ -1,5 +1,10 @@
 <?php
-require_once ASSETS_PLUGIN_DIR.DS.'vendor'.DS.'autoload.php';
+// The Stripe SDK is installed by composer. Guarded so this class loads
+// without it and its payload logic can be tested; any SDK call still fails
+// loudly when the SDK is missing (ro#1067).
+if (is_file(ASSETS_PLUGIN_DIR.DS.'vendor'.DS.'autoload.php')) {
+	require_once ASSETS_PLUGIN_DIR.DS.'vendor'.DS.'autoload.php';
+}
 
 /**
  * @module Assets
@@ -573,6 +578,25 @@ class Assets_Payments_Stripe extends Assets_Payments implements Assets_Payments_
 		// Final validation: userId must exist
 		if (empty($metadata["userId"])) {
 			throw new Exception("Unable to resolve userId for $eventType");
+		}
+
+		// The payer must be that user (ro#1067). Every payment this plugin
+		// creates is made against the user's own assets_customer row
+		// (createPaymentIntent, charge, the Assets/payment intent handler)
+		// with metadata.userId set to the same user, so a legitimate event
+		// always matches. But metadata is whatever the payment's creator
+		// wrote: a payment against another customer, or with no customer
+		// (made outside this plugin -- the dashboard, another integration on
+		// the same Stripe account), must not credit or spend for the user it
+		// names.
+		if ($eventType === "payment_intent.succeeded" || $eventType === "invoice.paid") {
+			$customerId = Q::ifset($metadata, "customerId", null);
+			if (!Assets_Customer::belongsTo($customerId, $metadata["userId"], 'stripe')) {
+				self::log('stripe', "Refusing $eventType: Stripe customer "
+					. var_export($customerId, true) . " is not a customer of userId "
+					. $metadata["userId"] . " (chargeId " . Q::ifset($metadata, "chargeId", '') . ")");
+				throw new Exception("Stripe customer does not belong to the payment's userId for $eventType");
+			}
 		}
 
 		// -------------------------------------------------------------

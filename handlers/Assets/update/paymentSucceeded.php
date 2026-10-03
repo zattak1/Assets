@@ -33,7 +33,10 @@ function Assets_update_paymentSucceeded($data, $envelope)
 			'token' => $metadata['intentToken']
 		));
 
-		if ($intent->retrieve() && $intent->isValid()) {
+		// The intent spends its own userId's credits: only that user's
+		// payment may continue it (ro#1067).
+		if ($intent->retrieve() && $intent->isValid()
+		&& $intent->getInstruction('userId', null) === $data['userId']) {
 
 			$instructions = $intent->getAllInstructions();
 
