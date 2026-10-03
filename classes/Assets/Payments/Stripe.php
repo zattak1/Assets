@@ -713,6 +713,54 @@ class Assets_Payments_Stripe extends Assets_Payments implements Assets_Payments_
 		);
 	}
 
+	/**
+	 * Handle a setup_intent.succeeded event: make the saved payment method
+	 * the customer's default for invoices.
+	 *
+	 * metadata.userId is whatever the setup intent's creator wrote, so act
+	 * only if the event's customer is that user's own assets_customer row,
+	 * as resolveMetadata() requires of payments (ro#1067, ro#1070 R02).
+	 *
+	 * @method setupIntentSucceeded
+	 * @static
+	 * @param {object|array} $si The SetupIntent from the event
+	 * @param {object} [$client] A Stripe client; one is made from the
+	 *  configured secret if omitted
+	 * @return {boolean} whether the customer was updated
+	 */
+	static function setupIntentSucceeded($si, $client = null)
+	{
+		$metadata = Q::ifset($si, 'metadata', null);
+		if (is_object($metadata) && method_exists($metadata, 'toArray')) {
+			$metadata = $metadata->toArray();
+		}
+		$userId = Q::ifset($metadata, 'userId', null);
+		$pm = Q::ifset($si, 'payment_method', null);
+		$customerId = Q::ifset($si, 'customer', null);
+		if (!$userId || !$pm || !$customerId) {
+			self::log('stripe', 'setup_intent.succeeded missing userId, payment_method or customer');
+			return false;
+		}
+		if (!Assets_Customer::belongsTo($customerId, $userId)) {
+			self::log('stripe', 'Refusing setup_intent.succeeded: customer '
+				. var_export($customerId, true) . ' does not belong to userId '
+				. var_export($userId, true));
+			return false;
+		}
+		if (!$client) {
+			$client = new \Stripe\StripeClient(
+				Q_Config::expect('Assets', 'payments', 'stripe', 'secret')
+			);
+		}
+		$client->customers->update($customerId, array(
+			'invoice_settings' => array(
+				'default_payment_method' => $pm
+			)
+		));
+		self::log('stripe', 'SetupIntent succeeded, default payment method set for userId ' . $userId);
+		return true;
+	}
+
 	static function log ($title, $message=null) {
 		Q::log(date('Y-m-d H:i:s').': '.$title, 'stripe');
 		if ($message instanceof Throwable) {

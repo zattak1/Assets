@@ -198,44 +198,9 @@ function Assets_stripeWebhook_post($params = array())
 		// ---------------------------------------------------------
 		case 'setup_intent.succeeded':
 			try {
-				$si       = $event->data->object;
-				$metadata = _stripe_meta(Q::ifset($si, 'metadata', null));
-
-				$userId = Q::ifset($metadata, 'userId', null);
-				if (!$userId) {
-					Assets_Payments_Stripe::log("Stripe setup intent missing userId");
-					return;
-				}
-
-				$pm         = Q::ifset($si, 'payment_method', null);
-				$customerId = Q::ifset($si, 'customer', null);
-
-				if (!$pm || !$customerId) {
-					Assets_Payments_Stripe::log("setup_intent missing fields");
-					return;
-				}
-
-				// metadata.userId is whatever the setup intent's creator
-				// wrote: act only if the customer is that user's own, as
-				// resolveMetadata() requires of payments (ro#1067, ro#1070).
-				if (!Assets_Customer::belongsTo($customerId, $userId)) {
-					Assets_Payments_Stripe::log('stripe', 'Refusing setup_intent.succeeded: customer '
-						. var_export($customerId, true) . ' does not belong to userId '
-						. var_export($userId, true));
-					return;
-				}
-
-				$stripe = new \Stripe\StripeClient(
-					Q_Config::expect('Assets', 'payments', 'stripe', 'secret')
-				);
-
-				$stripe->customers->update($customerId, array(
-					'invoice_settings' => array(
-						'default_payment_method' => $pm
-					)
-				));
-
-				Assets_Payments_Stripe::log('SetupIntent succeeded, PM stored', $si);
+				// Requires the event's customer to be metadata.userId's own
+				// (ro#1067, ro#1070 R02)
+				Assets_Payments_Stripe::setupIntentSucceeded($event->data->object);
 
 			} catch (Exception $e) {
 				Assets_Payments_Stripe::log('stripe', 'Error in setup_intent.succeeded', $e);
