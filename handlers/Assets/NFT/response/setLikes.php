@@ -1,6 +1,10 @@
 <?php
 function Assets_NFT_response_setLikes ($params) {
 	$loggedInUser = Users::loggedInUser(true);
+	// A GET response slot that writes: require the session nonce, which a
+	// cross-site navigation cannot supply. Q/post's enforcement never reaches
+	// response slots (ro#1083).
+	Q_Valid::nonce(true);
 	$loggedInUserId = Q::ifset($loggedInUser, 'id', null);
 	$request = array_merge($_REQUEST, $params);
 	$required = array('publisherId', 'streamName');
