@@ -298,10 +298,9 @@ class Assets_NFT
 			return Q::json_decode($cache->result, true);
 		}
 
-		$response = Q_Utils::get($tokenURI, null, array(
-			CURLOPT_SSL_VERIFYPEER => false,
-			CURLOPT_SSL_VERIFYHOST => false
-		));
+		// Q_Utils::get() verifies TLS by default; this turned it off, so anyone
+		// on the path could substitute metadata that is then cached (ro#1109).
+		$response = Q_Utils::get($tokenURI);
 
 		$cache->result = gettype($response) == "string" ? $response : Q::json_encode($response);
 		$cache->save();
