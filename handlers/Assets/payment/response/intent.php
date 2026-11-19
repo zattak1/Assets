@@ -102,38 +102,39 @@ function Assets_payment_response_intent($options)
 
 	/**
 	 * ----------------------------------------------------------------------
-	 *   Require a non-empty intent token unless config explicitly allows no token
+	 *   Load intent if token is provided.
+	 *   When tokenless is allowed, the intent is optional but still honored.
+	 *   When tokenless is NOT allowed, the intent is required.
 	 * ----------------------------------------------------------------------
 	 */
-	if (!$tokenlessAllowed) {
+	$intent = null;
+	$intentToken = Q::ifset($options, 'intentToken', null);
+
+	if ($intentToken) {
+		$intent = Users_Intent::fromToken($intentToken);
+		if (!$intent || !$intent->isValid()) {
+			if (!$tokenlessAllowed) {
+				throw new Q_Exception_FailedValidation(array(
+					'message' => 'Invalid or expired intent token'
+				));
+			}
+			$intent = null;
+		}
+		if ($intent && !empty($intent->completedTime)) {
+			if (!$tokenlessAllowed) {
+				throw new Q_Exception_FailedValidation(array(
+					'message' => 'Intent already completed'
+				));
+			}
+			$intent = null;
+		}
+	} else if (!$tokenlessAllowed) {
 		Q_Valid::requireFields(
 			array('intentToken'),
 			$options,
 			true,
 			true
 		);
-	}
-
-	/**
-	 * ----------------------------------------------------------------------
-	 *   Load intent only if token is used
-	 * ----------------------------------------------------------------------
-	 */
-	$intent = null;
-	if (!$tokenlessAllowed) {
-
-		$intent = Users_Intent::fromToken($options['intentToken']);
-		if (!$intent || !$intent->isValid()) {
-			throw new Q_Exception_FailedValidation(array(
-				'message' => 'Invalid or expired intent token'
-			));
-		}
-
-		if (!empty($intent->completedTime)) {
-			throw new Q_Exception_FailedValidation(array(
-				'message' => 'Intent already completed'
-			));
-		}
 	}
 
 	/**
@@ -220,7 +221,12 @@ function Assets_payment_response_intent($options)
 	$metadata['userId']    = $userId;
 	$metadata['sessionId'] = Q_Session::id();
 
-	if (!$tokenlessAllowed && $intent) {
+	// Carried even in tokenless mode (upstream af5384b): the webhook's
+	// continuation needs it to spend the bought credits on what the
+	// intent was for. BoughtCredits is tokenless by default, so dropping
+	// it left a paid class booking stuck at going=maybe (ro#1245). The
+	// webhook only continues an intent owned by the paying user (ro#1067).
+	if ($intent) {
 		$metadata['intentToken'] = $intent->token;
 	}
 
