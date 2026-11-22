@@ -684,6 +684,133 @@ class Assets_Credits extends Base_Assets_Credits
 	}
 
 	/**
+	 * Takes back the credits a refunded or lost-disputed card payment bought
+	 * (ro#1246). The member's balance may go below zero: the credits may
+	 * already have been spent, and the processor has already returned the
+	 * money, so refusing would leave the member holding credits nobody paid
+	 * for. A negative balance blocks spending by itself, because spend() and
+	 * transfer() refuse any amount above the balance, until enough credits
+	 * are bought or granted to bring it back to zero or above.
+	 *
+	 * Idempotent per charge: how many credits have been taken back so far is
+	 * kept in the charge's attributes as reversedCredits, and only the part
+	 * of $targetCredits not yet taken back is debited. The charge row is
+	 * re-read under the member's balance lock, so two deliveries of the same
+	 * webhook serialize on that lock and the second debits nothing. The
+	 * ledger row, the new balance and the charge's reversedCredits commit in
+	 * one transaction.
+	 *
+	 * Mirrors grant(): the community is named as the receiving side of the
+	 * ledger row, but no community balance moves, just as a grant of bought
+	 * credits debits none.
+	 * @method reverseCharge
+	 * @static
+	 * @param {Assets_Charge} $charge The charge whose payment was returned
+	 * @param {integer} $targetCredits How many of its credits should be taken
+	 *   back in total once this refund is applied (cumulative, not a delta)
+	 * @param {array} [$attributes] Recorded on the ledger row, e.g. refundId, cause
+	 * @return {integer} How many credits this call took back (0 if none were due)
+	 */
+	static function reverseCharge(Assets_Charge $charge, $targetCredits, $attributes = array())
+	{
+		self::refuseIfBalanceLockHeld('reverseCharge');
+
+		$userId = $charge->userId;
+		$communityId = $charge->communityId ? $charge->communityId : Users::communityId();
+		$chargeCredits = (int)$charge->credits;
+		if (!$chargeCredits) {
+			$chargeCredits = (int)Q::ifset(Q::json_decode($charge->attributes, true), 'credits', 0);
+		}
+		$targetCredits = max(0, min((int)$targetCredits, $chargeCredits));
+
+		$stream = self::stream($communityId, $userId, $communityId);
+		$debited = 0;
+		self::$balanceLocksHeld++;
+		try {
+			self::lockBalance($stream);
+			try {
+				$fresh = new Assets_Charge();
+				$fresh->userId = $charge->userId;
+				$fresh->id = $charge->id;
+				if (!$fresh->retrieve(null, true, array(
+					'lock' => 'FOR UPDATE',
+					'ignoreCache' => true,
+					'caching' => false
+				))) {
+					throw new Q_Exception_MissingRow(array(
+						'table' => 'charge',
+						'criteria' => 'id = ' . $charge->id
+					));
+				}
+				$chargeAttributes = Q::json_decode($fresh->attributes, true);
+				if (!is_array($chargeAttributes)) {
+					$chargeAttributes = array();
+				}
+				$already = (int)Q::ifset($chargeAttributes, 'reversedCredits', 0);
+				$debited = $targetCredits - $already;
+				if ($debited <= 0) {
+					$stream->executeRollback();
+					return 0;
+				}
+
+				$attributes['amount'] = $debited;
+				$attributes['chargeId'] = $fresh->id;
+				foreach ($attributes as $k => $v) {
+					if (is_object($v) or is_array($v)) {
+						unset($attributes[$k]);
+					}
+				}
+				$assets_credits = self::createRow(
+					$communityId, $debited, Assets::CHARGE_REFUNDED,
+					$communityId, $userId, $attributes
+				);
+
+				$chargeAttributes['reversedCredits'] = $targetCredits;
+				$fresh->attributes = Q::json_encode($chargeAttributes);
+				// The status column exists (1.3 migration) but the generated
+				// Base_Assets_Charge predates it, so this write is dropped
+				// until the base class is regenerated (ro#1253). Nothing
+				// depends on it: reversedCredits above is the record.
+				if ($targetCredits >= $chargeCredits) {
+					$fresh->status = 'reversed';
+				}
+				$fresh->save(false, false);
+
+				$stream->setAttribute('amount', $stream->getAttribute('amount') - $debited);
+				$changes = array('attributes' => $stream->attributes);
+				$stream->save(false, array('commit' => true));
+			} catch (Exception $e) {
+				self::rollbackKeepingError($stream);
+				throw $e;
+			}
+		} finally {
+			self::$balanceLocksHeld--;
+		}
+
+		$stream->post($communityId, array(
+			'type' => 'Streams/changed',
+			'content' => '',
+			'instructions' => compact('changes')
+		), true);
+
+		$text = Q_Text::get('Assets/content');
+		$instructions = self::attributesSnapshot($assets_credits, $attributes);
+		$instructions['app'] = Q::app();
+		$instructions['operation'] = '-';
+		$instructions['reason'] = self::reasonToText(Assets::CHARGE_REFUNDED, $instructions);
+		$type = 'Assets/credits/reversed';
+		$content = Q::ifset($text, 'messages', $type, 'content',
+			'{{amount}} credits removed: your card payment was refunded');
+		$stream->post($communityId, array(
+			'type' => $type,
+			'content' => Q::interpolate($content, array('amount' => $debited)),
+			'instructions' => Q::json_encode($instructions, Q::JSON_FORCE_OBJECT)
+		), true);
+
+		return $debited;
+	}
+
+	/**
 	 * Refund credits from one user to another
 	 * @method refund
 	 * @static

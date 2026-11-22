@@ -76,6 +76,7 @@
 		"CreatedCommunity": "for creating community \"{{communityId}}\"",
 		"LeftPaidStream": "as a reservation refund from \"<a data-publisherId='{{fromPublisherId}}' data-streamName='{{fromStreamName}}'>{{fromStreamTitle}}</a>\"",
 		"BoughtCredits": "Bought {{amount}} credits",
+		"ChargeRefunded": "because the card payment that bought them was refunded",
 		"BonusCredits": "Bonus {{amount}} credits",
 		"BuyAmountCredits": "Buy {{amount}} credits",
 		"WatchClip": "for watching {{fromStreamTitle}}",
@@ -121,6 +122,7 @@
 		},
 		"CreatedCommunity": "Spent {{amount}} credits",
 		"BoughtCredits": "Bought {{amount}} credits",
+		"ChargeRefunded": "Removed {{amount}} credits (card payment refunded)",
 		"BonusCredits": "Got bonus {{amount}} credits",
 		"InviteAcceptedBy": "Earned {{amount}} credits",
 		"Streams_user_firstname": "Earned {{amount}} credits",
@@ -229,6 +231,9 @@
 		},
 		"Assets/credits/spent": {
 			"content": "Spent {{amount}} credits"
+		},
+		"Assets/credits/reversed": {
+			"content": "{{amount}} credits removed: your card payment was refunded"
 		},
 		"Assets/credits/sent": {
 			"content": "Sent {{amount}} credits to {{toUserName}}"

@@ -285,6 +285,55 @@ function Assets_stripeWebhook_post($params = array())
 			break;
 
 		// ---------------------------------------------------------
+		// MONEY RETURNED TO THE PAYER (ro#1246)
+		// A refund made in the Stripe dashboard, or a dispute the
+		// merchant lost: take back the credits the payment bought.
+		// Assets::refunded() is idempotent, so redeliveries and the
+		// cumulative amount of a later partial refund are safe.
+		// The webhook destination must subscribe to both events.
+		// ---------------------------------------------------------
+		case 'charge.refunded':
+		case 'charge.dispute.closed':
+			try {
+				$object = $event->data->object;
+				if ($event->type === 'charge.dispute.closed') {
+					if (Q::ifset($object, 'status', null) !== 'lost') {
+						Assets_Payments_Stripe::log('stripe', 'Dispute closed, not lost: nothing to reverse');
+						break;
+					}
+					$returned = (int)Q::ifset($object, 'amount', 0);
+					$chargeObj = _stripe_client()->charges->retrieve(Q::ifset($object, 'charge', ''));
+					$cause = 'dispute';
+				} else {
+					$chargeObj = $object;
+					$returned = (int)Q::ifset($chargeObj, 'amount_refunded', 0);
+					$cause = 'refund';
+				}
+				$context = _stripe_refund_context($chargeObj);
+				if ($context['app'] && $context['app'] !== Q::app()) {
+					Assets_Payments_Stripe::log('stripe', $event->type . ' for another app');
+					break;
+				}
+				$result = Assets::refunded(
+					'stripe', $context['ids'], $returned, $context['chargedCents'], array(
+						'customerId' => $context['customerId'],
+						'intentToken' => $context['intentToken'],
+						'cause' => $cause,
+						'refundId' => $event->id
+					)
+				);
+				Assets_Payments_Stripe::log('stripe', $event->type . ' handled', array(
+					'ids' => $context['ids'],
+					'returned' => $returned,
+					'chargedCents' => $context['chargedCents'],
+					'creditsTakenBack' => $result
+				));
+			} catch (Exception $e) {
+				Assets_Payments_Stripe::log('stripe', 'Error in ' . $event->type, $e->getMessage());
+			}
+			break;
+
+		// ---------------------------------------------------------
 		// IGNORE EVERYTHING ELSE
 		// ---------------------------------------------------------
 		default:
@@ -304,4 +353,52 @@ function _stripe_meta($m)
 		return $m->toArray();
 	}
 	return array();
+}
+
+/**
+ * A Stripe client on the configured secret.
+ */
+function _stripe_client()
+{
+	return new \Stripe\StripeClient(
+		Q_Config::expect('Assets', 'payments', 'stripe', 'secret')
+	);
+}
+
+/**
+ * What Assets::refunded() needs from a Stripe Charge (ro#1246): the ids the
+ * charge may be recorded under (Assets::charged() stores the PaymentIntent id
+ * when the event carried no charge), its customer and amount, the app it
+ * belongs to, and the Users_Intent token the payment continued. The token and
+ * app live in the PaymentIntent's metadata, which Stripe does not always copy
+ * onto the Charge, so the PaymentIntent is fetched when the Charge lacks them.
+ * A failed fetch only loses the booking cancellation, never the reversal.
+ */
+function _stripe_refund_context($chargeObj)
+{
+	$meta = _stripe_meta(Q::ifset($chargeObj, 'metadata', null));
+	$pi = Q::ifset($chargeObj, 'payment_intent', null);
+	if (is_object($pi)) {
+		$meta = array_merge(_stripe_meta(Q::ifset($pi, 'metadata', null)), $meta);
+		$pi = Q::ifset($pi, 'id', null);
+	}
+	if ($pi && (empty($meta['intentToken']) || empty($meta['app']))) {
+		try {
+			$piObj = _stripe_client()->paymentIntents->retrieve($pi);
+			$meta = array_merge(_stripe_meta(Q::ifset($piObj, 'metadata', null)), $meta);
+		} catch (Exception $e) {
+			Assets_Payments_Stripe::log('stripe', 'Could not fetch the PaymentIntent of a refunded charge', $e->getMessage());
+		}
+	}
+	$customer = Q::ifset($chargeObj, 'customer', null);
+	if (is_object($customer)) {
+		$customer = Q::ifset($customer, 'id', null);
+	}
+	return array(
+		'ids' => array_values(array_filter(array(Q::ifset($chargeObj, 'id', null), $pi))),
+		'customerId' => is_string($customer) ? $customer : null,
+		'chargedCents' => (int)Q::ifset($chargeObj, 'amount', 0),
+		'intentToken' => Q::ifset($meta, 'intentToken', null),
+		'app' => Q::ifset($meta, 'app', null)
+	);
 }

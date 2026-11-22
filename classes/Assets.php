@@ -617,6 +617,157 @@ abstract class Assets extends Base_Assets
 	}
 
 	/**
+	 * Takes back the credits of a card payment whose money went back to the
+	 * payer: a refund made in the processor's dashboard, or a lost dispute
+	 * (ro#1246). Called by the processor's webhook.
+	 *
+	 * The owner's policy (2026-11-19, ro#1246):
+	 * 1. a booking the payment was made for is cancelled, so the member
+	 *    leaves and the seat is freed -- done by whoever handles the
+	 *    Assets/refunded {after} event (Calendars cancels a future event);
+	 * 2. the refunded credits are removed from the member's balance; after
+	 *    step 1 gives back the booking's credits this nets to exactly the
+	 *    refunded amount;
+	 * 3. if the credits were already spent elsewhere, the balance goes below
+	 *    zero and spending stays blocked until it is back to zero or above.
+	 *    Nothing else is cancelled and the refund is never refused.
+	 *
+	 * Only a FULL refund cancels the booking. A partial refund (a discount
+	 * given after the fact) removes that share of the credits and leaves the
+	 * booking alone.
+	 *
+	 * Idempotent: the processor may deliver the same event more than once,
+	 * and a later partial refund arrives with a cumulative amount, so the
+	 * credits to take back are computed as a total and only the part not yet
+	 * taken back is debited (Assets_Credits::reverseCharge). The {after}
+	 * event fires only from the call that actually debited.
+	 * @method refunded
+	 * @static
+	 * @param {string} $payments The processor, e.g. "stripe"
+	 * @param {array} $chargeIds Ids the charge may be recorded under: for
+	 *   Stripe both the PaymentIntent id and the Charge id, since
+	 *   Assets::charged() records whichever the webhook had
+	 * @param {integer} $returnedCents Total returned to the payer so far, in
+	 *   the processor's smallest unit (cumulative over all refunds)
+	 * @param {integer} $chargedCents What the payment was for, same unit
+	 * @param {array} [$options]
+	 * @param {string} [$options.customerId] The processor's customer: when
+	 *   given, a charge recorded for a user who does not own that customer is
+	 *   ignored (as the payment webhook does, ro#1067)
+	 * @param {string} [$options.intentToken] The Users_Intent the payment was
+	 *   made to continue, if known: its target is the booking to cancel
+	 * @param {string} [$options.cause="refund"] "refund" or "dispute"
+	 * @param {string} [$options.refundId] Recorded on the ledger row
+	 * @return {integer|false} Credits taken back by this call, or false if
+	 *   no recorded charge matches
+	 */
+	static function refunded($payments, $chargeIds, $returnedCents, $chargedCents, $options = array())
+	{
+		$chargeIds = array_values(array_filter(array_unique((array)$chargeIds), 'is_string'));
+		if (!$chargeIds) {
+			return false;
+		}
+		$rows = Assets_Charge::select()
+			->where(array('id' => $chargeIds))
+			->ignoreCache()
+			->fetchDbRows();
+		$customerId = Q::ifset($options, 'customerId', null);
+		$charge = null;
+		foreach ($rows as $row) {
+			$attributes = Q::json_decode($row->attributes, true);
+			if (strtolower((string)Q::ifset($attributes, 'payments', $payments)) !== strtolower($payments)) {
+				continue;
+			}
+			if ($customerId && !Assets_Customer::belongsTo($customerId, $row->userId, strtolower($payments))) {
+				continue;
+			}
+			if ($charge) {
+				// Two users recorded under one processor id: refuse to guess.
+				Q::log("Assets::refunded: charge " . implode('/', $chargeIds)
+					. " is recorded for more than one user; nothing reversed", 'stripe');
+				return false;
+			}
+			$charge = $row;
+		}
+		if (!$charge) {
+			return false;
+		}
+
+		$chargeCredits = (int)$charge->credits;
+		if (!$chargeCredits) {
+			$chargeCredits = (int)Q::ifset(Q::json_decode($charge->attributes, true), 'credits', 0);
+		}
+		$returnedCents = max(0, (int)$returnedCents);
+		$chargedCents = (int)$chargedCents;
+		$fully = ($chargedCents <= 0 || $returnedCents >= $chargedCents);
+		$targetCredits = $fully
+			? $chargeCredits
+			: (int)round($chargeCredits * $returnedCents / $chargedCents);
+
+		$cause = Q::ifset($options, 'cause', 'refund');
+		$debited = Assets_Credits::reverseCharge($charge, $targetCredits, array_filter(array(
+			'cause' => $cause,
+			'refundId' => Q::ifset($options, 'refundId', null),
+			'payments' => $payments
+		)));
+		if (!$debited) {
+			return 0;
+		}
+
+		// What the payment was made for, from the intent it continued, but
+		// only an intent of this same user (ro#1067).
+		$toPublisherId = $toStreamName = $fromPublisherId = $fromStreamName = null;
+		if ($token = Q::ifset($options, 'intentToken', null)) {
+			$intent = Users_Intent::fromToken($token);
+			if ($intent && $intent->getInstruction('userId', null) === $charge->userId) {
+				$toPublisherId = $intent->getInstruction('toPublisherId', null);
+				$toStreamName = $intent->getInstruction('toStreamName', null);
+				$fromPublisherId = $intent->getInstruction('fromPublisherId', null);
+				$fromStreamName = $intent->getInstruction('fromStreamName', null);
+			}
+		}
+
+		/**
+		 * After the credits of a returned card payment were taken back.
+		 * Handlers undo what the payment was for (e.g. cancel a booking).
+		 * Fires once per refund that actually debited credits.
+		 * @event Assets/refunded {after}
+		 * @param {Assets_Charge} charge
+		 * @param {string} userId The member who paid
+		 * @param {integer} credits Taken back by this refund
+		 * @param {integer} reversedCredits Taken back in total so far
+		 * @param {boolean} fullyReversed Whether the whole payment is returned
+		 * @param {string} cause "refund" or "dispute"
+		 * @param {string|null} toPublisherId What the payment was made for
+		 * @param {string|null} toStreamName
+		 * @param {string|null} fromPublisherId On whose behalf (ro#1039)
+		 * @param {string|null} fromStreamName
+		 */
+		try {
+			Q::event('Assets/refunded', array(
+				'charge' => $charge,
+				'userId' => $charge->userId,
+				'credits' => $debited,
+				'reversedCredits' => $targetCredits,
+				'fullyReversed' => $fully,
+				'cause' => $cause,
+				'toPublisherId' => $toPublisherId,
+				'toStreamName' => $toStreamName,
+				'fromPublisherId' => $fromPublisherId,
+				'fromStreamName' => $fromStreamName
+			), 'after');
+		} catch (Exception $e) {
+			// The credits are already taken back and committed; a handler
+			// failing must not hide that. Logged for an operator to finish
+			// what the handler could not (e.g. remove the member by hand).
+			Q::log("Assets::refunded: credits reversed for charge {$charge->id}"
+				. " (user {$charge->userId}) but an Assets/refunded handler failed: "
+				. $e->getMessage(), 'stripe');
+		}
+		return $debited;
+	}
+
+	/**
 	 * Records a successful one charge on a customer account using a payments processor
 	 * @method charged
 	 * @static
@@ -1078,4 +1229,5 @@ abstract class Assets extends Base_Assets
 	const LEFT_PAID_STREAM = 'LeftPaidStream';
 	const CREATED_COMMUNITY = 'CreatedCommunity';
     const BOUGHT_CREDITS = 'BoughtCredits';
+	const CHARGE_REFUNDED = 'ChargeRefunded';
 };

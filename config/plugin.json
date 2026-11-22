@@ -543,6 +543,7 @@
 				"PaymentToUser": { "by": "transferring credits to a user" },
 				"JoinedPaidStream": { "by": "joining a paid stream" },
 				"LeftPaidStream": { "by": "leaving a paid stream (refund)" },
+				"ChargeRefunded": { "by": "a card payment being refunded or lost in a dispute (ro#1246)" },
 				"CreatedCommunity": { "by": "creating a community" },
 				"CreatePrivateChat": { "by": "starting a private chat" },
 				"CreatePaidStream": { "by": "creating a paid stream" },
