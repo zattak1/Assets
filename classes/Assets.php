@@ -700,9 +700,13 @@ abstract class Assets extends Base_Assets
 		$returnedCents = max(0, (int)$returnedCents);
 		$chargedCents = (int)$chargedCents;
 		$fully = ($chargedCents <= 0 || $returnedCents >= $chargedCents);
+		// A partial share is rounded DOWN, so it never reaches the whole
+		// charge: only the refund that really returns everything takes the
+		// last credit, reports fullyReversed and cancels the booking.
 		$targetCredits = $fully
 			? $chargeCredits
-			: (int)round($chargeCredits * $returnedCents / $chargedCents);
+			: min($chargeCredits - 1, (int)floor($chargeCredits * $returnedCents / $chargedCents));
+		$targetCredits = max(0, $targetCredits);
 
 		$cause = Q::ifset($options, 'cause', 'refund');
 		$debited = Assets_Credits::reverseCharge($charge, $targetCredits, array_filter(array(
@@ -714,10 +718,13 @@ abstract class Assets extends Base_Assets
 			return 0;
 		}
 
-		// What the payment was made for, from the intent it continued, but
-		// only an intent of this same user (ro#1067).
-		$toPublisherId = $toStreamName = $fromPublisherId = $fromStreamName = null;
-		if ($token = Q::ifset($options, 'intentToken', null)) {
+		// What the payment was made for: recorded on the charge by the
+		// payment webhook (ro#1246), else the intent it continued if that
+		// still exists -- only an intent of this same user (ro#1067).
+		$toPublisherId = $charge->streamName ? $charge->publisherId : null;
+		$toStreamName = $charge->streamName ? $charge->streamName : null;
+		$fromPublisherId = $fromStreamName = null;
+		if (!$toStreamName and $token = Q::ifset($options, 'intentToken', null)) {
 			$intent = Users_Intent::fromToken($token);
 			if ($intent && $intent->getInstruction('userId', null) === $charge->userId) {
 				$toPublisherId = $intent->getInstruction('toPublisherId', null);

@@ -787,25 +787,34 @@ class Assets_Credits extends Base_Assets_Credits
 			self::$balanceLocksHeld--;
 		}
 
-		$stream->post($communityId, array(
-			'type' => 'Streams/changed',
-			'content' => '',
-			'instructions' => compact('changes')
-		), true);
+		// The reversal is committed. The notices below are best effort: a
+		// failure here must not hide the debit from the caller, which fires
+		// Assets/refunded only when this returns a positive amount, and no
+		// redelivery could fire it again (ro#1246).
+		try {
+			$stream->post($communityId, array(
+				'type' => 'Streams/changed',
+				'content' => '',
+				'instructions' => compact('changes')
+			), true);
 
-		$text = Q_Text::get('Assets/content');
-		$instructions = self::attributesSnapshot($assets_credits, $attributes);
-		$instructions['app'] = Q::app();
-		$instructions['operation'] = '-';
-		$instructions['reason'] = self::reasonToText(Assets::CHARGE_REFUNDED, $instructions);
-		$type = 'Assets/credits/reversed';
-		$content = Q::ifset($text, 'messages', $type, 'content',
-			'{{amount}} credits removed: your card payment was refunded');
-		$stream->post($communityId, array(
-			'type' => $type,
-			'content' => Q::interpolate($content, array('amount' => $debited)),
-			'instructions' => Q::json_encode($instructions, Q::JSON_FORCE_OBJECT)
-		), true);
+			$text = Q_Text::get('Assets/content');
+			$instructions = self::attributesSnapshot($assets_credits, $attributes);
+			$instructions['app'] = Q::app();
+			$instructions['operation'] = '-';
+			$instructions['reason'] = self::reasonToText(Assets::CHARGE_REFUNDED, $instructions);
+			$type = 'Assets/credits/reversed';
+			$content = Q::ifset($text, 'messages', $type, 'content',
+				'{{amount}} credits removed: your card payment was refunded');
+			$stream->post($communityId, array(
+				'type' => $type,
+				'content' => Q::interpolate($content, array('amount' => $debited)),
+				'instructions' => Q::json_encode($instructions, Q::JSON_FORCE_OBJECT)
+			), true);
+		} catch (Exception $e) {
+			Q::log("Assets_Credits::reverseCharge: $debited credits reversed for charge {$charge->id}"
+				. " but the notice failed: " . $e->getMessage());
+		}
 
 		return $debited;
 	}

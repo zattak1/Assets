@@ -68,6 +68,22 @@ function Assets_handleStripeSuccessfulCharge($amount, $currency, $metadata, $eve
 
 				$instructions = $intent->getAllInstructions();
 
+				// Record on the charge what it was paid for, now, while the
+				// intent exists: an Assets/charge intent expires in minutes
+				// and is then garbage-collected, but a refund can come days
+				// later and must find the booking to cancel (ro#1246).
+				if ($charge instanceof Assets_Charge
+				and !empty($instructions['toPublisherId']) and !empty($instructions['toStreamName'])
+				and !$charge->streamName) {
+					try {
+						$charge->publisherId = $instructions['toPublisherId'];
+						$charge->streamName = $instructions['toStreamName'];
+						$charge->save();
+					} catch (Exception $e) {
+						Assets_Payments_Stripe::log('stripe', 'Could not record the charge target', $e->getMessage());
+					}
+				}
+
 				// get amount of credits to transfer
 				// fromPublisherId/fromStreamName: the stream paid for on the
 				// payer's behalf (a pet at an event). Assets::pay() puts them
@@ -301,8 +317,28 @@ function Assets_stripeWebhook_post($params = array())
 						Assets_Payments_Stripe::log('stripe', 'Dispute closed, not lost: nothing to reverse');
 						break;
 					}
-					$returned = (int)Q::ifset($object, 'amount', 0);
-					$chargeObj = _stripe_client()->charges->retrieve(Q::ifset($object, 'charge', ''));
+					// The Charge gives the amounts and the customer. If it can't
+					// be fetched, the dispute alone still names the charge and
+					// the PaymentIntent: reverse it in full rather than not at
+					// all (Stripe has already taken the money back).
+					$chargeObj = null;
+					try {
+						$chargeObj = _stripe_client()->charges->retrieve(Q::ifset($object, 'charge', ''));
+					} catch (Exception $e) {
+						Assets_Payments_Stripe::log('stripe', 'Could not fetch the disputed charge; reversing it in full', $e->getMessage());
+					}
+					if (!$chargeObj) {
+						$chargeObj = (object)array(
+							'id' => Q::ifset($object, 'charge', null),
+							'payment_intent' => Q::ifset($object, 'payment_intent', null),
+							'amount' => 0
+						);
+					}
+					// What the payer got back in total: anything refunded
+					// before the dispute, plus the disputed amount. The
+					// reversal works on that cumulative figure.
+					$returned = (int)Q::ifset($chargeObj, 'amount_refunded', 0)
+						+ (int)Q::ifset($object, 'amount', 0);
 					$cause = 'dispute';
 				} else {
 					$chargeObj = $object;
@@ -380,8 +416,8 @@ function _stripe_refund_context($chargeObj)
 	$pi = Q::ifset($chargeObj, 'payment_intent', null);
 	if (is_object($pi)) {
 		$meta = array_merge(_stripe_meta(Q::ifset($pi, 'metadata', null)), $meta);
-		$pi = Q::ifset($pi, 'id', null);
 	}
+	$pi = _stripe_id($pi);
 	if ($pi && (empty($meta['intentToken']) || empty($meta['app']))) {
 		try {
 			$piObj = _stripe_client()->paymentIntents->retrieve($pi);
@@ -395,10 +431,23 @@ function _stripe_refund_context($chargeObj)
 		$customer = Q::ifset($customer, 'id', null);
 	}
 	return array(
-		'ids' => array_values(array_filter(array(Q::ifset($chargeObj, 'id', null), $pi))),
+		'ids' => array_values(array_filter(array(
+			Q::ifset($chargeObj, 'id', null), $pi, _stripe_id(Q::ifset($chargeObj, 'invoice', null))
+		), 'is_string')),
 		'customerId' => is_string($customer) ? $customer : null,
 		'chargedCents' => (int)Q::ifset($chargeObj, 'amount', 0),
 		'intentToken' => Q::ifset($meta, 'intentToken', null),
 		'app' => Q::ifset($meta, 'app', null)
 	);
+}
+
+/**
+ * The id of a Stripe field that is either an id string or an expanded object.
+ */
+function _stripe_id($value)
+{
+	if (is_object($value)) {
+		$value = Q::ifset($value, 'id', null);
+	}
+	return is_string($value) && $value !== '' ? $value : null;
 }
